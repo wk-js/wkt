@@ -2,7 +2,7 @@
 
 module.exports = function() {
 
-  this.after('application:modules', 'environment:module', function() {
+  this.configure.after('application:module', 'application:module:environment', function() {
     this.module( require('../workflow/modules/environment.js') )
   })
 

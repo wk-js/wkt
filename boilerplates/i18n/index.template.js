@@ -2,7 +2,7 @@
 
 module.exports = function() {
 
-  this.after('application:setups', 'i18n:initialize', function() {
+  this.configure.after('application:setup', 'application:setup:i18n', function() {
     this.config.i18n.default_locale = 'en'
     this.config.i18n.locales.push( 'en', 'fr' )
     this.config.i18n.load_path.push(
@@ -10,8 +10,20 @@ module.exports = function() {
     )
   })
 
-  this.after('application:modules', 'i18n:module', function() {
+  this.configure.after('application:module', 'application:module:i18n', function() {
     this.module( require('../workflow/modules/i18n.js') )
+  })
+
+  this.file('package.json', function(content) {
+
+    const pkg = JSON.parse(content)
+
+    pkg.dependencies = Object.assign(pkg.dependencies, {
+      "lol": "github:makemepulse/lol.js#0.0.4"
+    })
+
+    return JSON.stringify(pkg)
+
   })
 
 }

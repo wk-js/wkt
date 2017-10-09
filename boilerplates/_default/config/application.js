@@ -4,10 +4,10 @@ module.exports = function Application() {
 
   this.configure.add('application:initialize', function() {
 
-    <%= CHUNKS['application:setups'].join('\n\n') %>
+    <%= CHUNKS['application:setup'].join('\n\n') %>
 
   })
 
-  <%= CHUNKS['application:modules'].join('\n') %>
+  <%= CHUNKS['application:module'].join('\n') %>
 
 }

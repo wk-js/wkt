@@ -2,7 +2,7 @@
 
 module.exports = function() {
 
-  this.after('application:modules', 'git:module', function() {
+  this.configure.after('application:module', 'application:module:git', function() {
     this.module( require('../workflow/modules/git.js') )
   })
 

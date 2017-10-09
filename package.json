@@ -12,7 +12,8 @@
     "js-beautify": "^1.7.4",
     "lodash.template": "^4.4.0",
     "lol": "github:makemepulse/lol.js#0.0.4",
-    "when": "^3.7.8"
+    "when": "^3.7.8",
+    "workflow-cli": "github:wk-js/wk#v1.0.0-beta.1"
   },
   "devDependencies": {},
   "scripts": {

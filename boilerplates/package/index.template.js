@@ -2,7 +2,7 @@
 
 module.exports = function() {
 
-  this.after('application:modules', 'package:module', function() {
+  this.configure.after('application:module', 'application:module:package', function() {
     this.module( require('../workflow/modules/package.js') )
   })
 
