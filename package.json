@@ -1,0 +1,23 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "filelist": "github:FuriouZz/filelist",
+    "fs-extra": "^4.0.2",
+    "js-beautify": "^1.7.4",
+    "lodash.template": "^4.4.0",
+    "lol": "github:makemepulse/lol.js#0.0.4",
+    "when": "^3.7.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
