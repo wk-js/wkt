@@ -2,7 +2,8 @@
 
 module.exports = function() {
 
-  this.boilerplate('assets')
+  this.boilerplate( 'application_base' )
+  this.boilerplate( 'assets' )
 
   this.configure.after('application:module', 'application:module:webpack', function() {
     this.module( require('../workflow/modules/webpack.js') )

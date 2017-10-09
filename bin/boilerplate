@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+'use strict'
+
+const Resolver     = require('../lib')
+const { basename } = require('path')
+const { Parser }   = require('wk-argv-parser')
+
+const { result, errors } = Parser.command('boilerplate')
+
+// <boilerplate>
+.string('boilerplate')
+.index('boilerplate', 0)
+.required('boilerplate', 'Invalid boilerplate! Need to be a name or a path')
+
+// --destination, --output, -o
+.string('destination', process.cwd())
+.alias('destination', [ 'o', 'output' ])
+
+// --help, -h
+.help()
+
+// Parse arguments
+.parse(process.argv.slice(2).join(' '))
+
+if (result.params.help) {
+  console.log(basename(__filename), result.config.help.description)
+} else if (errors) {
+
+  const errors_str = errors.map((err) => {
+    return `${err.message} [missings: ${err.missings.join(', ')}]`
+  }).join('\n')
+
+  console.log(errors_str)
+
+} else {
+
+  result.config = null
+  result.set( result.valid_params )
+
+  const resolver = new Resolver
+  resolver.boilerplate( result.params.boilerplate, result.params )
+  resolver.make( result.params.destination )
+
+}

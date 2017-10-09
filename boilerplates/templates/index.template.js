@@ -2,6 +2,8 @@
 
 module.exports = function() {
 
+  this.boilerplate( 'application_base' )
+
   this.configure.after('Wkfile', 'Wkfile:templates', function() {
     wk.require('template', true)
   })

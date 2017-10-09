@@ -2,6 +2,8 @@
 
 module.exports = function() {
 
+  this.boilerplate( 'application_base' )
+
   this.configure.after('application:setup', 'application:setup:assets', function() {
 
     this.assets.LOAD_PATH          = './app'

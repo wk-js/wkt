@@ -1,5 +1,8 @@
 .DS_Store
 .history
+.tmp
 
 node_modules
 tmp
+
+npm-debug.*
