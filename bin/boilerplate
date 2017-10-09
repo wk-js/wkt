@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const Resolver     = require('../lib')
+const Boilerplate  = require('../lib')
 const { basename } = require('path')
 const { Parser }   = require('wk-argv-parser')
 
@@ -37,8 +37,7 @@ if (result.params.help) {
   result.config = null
   result.set( result.valid_params )
 
-  const resolver = new Resolver
-  resolver.boilerplate( result.params.boilerplate, result.params )
-  resolver.make( result.params.destination )
+  const boilerplate = new Boilerplate( result.params.boilerplate, result.params )
+  boilerplate.make( result.params.destination )
 
 }

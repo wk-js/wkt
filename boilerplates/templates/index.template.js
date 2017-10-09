@@ -2,13 +2,11 @@
 
 module.exports = function() {
 
-  this.boilerplate( 'application_base' )
-
-  this.configure.after('Wkfile', 'Wkfile:templates', function() {
+  this.chunk.after('Wkfile', 'Wkfile:templates', function() {
     wk.require('template', true)
   })
 
-  this.file('package.json', function(content) {
+  this.chunk.file('package.json', function(content) {
 
     const pkg = JSON.parse(content)
 

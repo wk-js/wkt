@@ -2,9 +2,7 @@
 
 module.exports = function() {
 
-  this.boilerplate( 'application_base' )
-
-  this.configure.after('application:setup', 'application:setup:i18n', function() {
+  this.chunk.after('application:setup', 'application:setup:i18n', function() {
     this.config.i18n.default_locale = 'en'
     this.config.i18n.locales.push( 'en', 'fr' )
     this.config.i18n.load_path.push(
@@ -12,11 +10,11 @@ module.exports = function() {
     )
   })
 
-  this.configure.after('application:module', 'application:module:i18n', function() {
+  this.chunk.after('application:module', 'application:module:i18n', function() {
     this.module( require('../workflow/modules/i18n.js') )
   })
 
-  this.file('package.json', function(content) {
+  this.chunk.file('package.json', function(content) {
 
     const pkg = JSON.parse(content)
 
