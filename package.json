@@ -16,7 +16,7 @@
     "lodash.template": "^4.4.0",
     "lol": "github:makemepulse/lol.js#0.0.4",
     "when": "^3.7.8",
-    "wk-argv-parser": "github:wk-js/wk-argv-parser#v0.0.8"
+    "wk-argv-parser": "github:wk-js/argv-parser"
   },
   "devDependencies": {},
   "scripts": {

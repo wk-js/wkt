@@ -14,16 +14,16 @@ module.exports = function() {
     this.module( require('../workflow/modules/i18n.js') )
   })
 
-  this.chunk.file('package.json', function(content) {
+  // this.chunk.file('package.json', function(content) {
 
-    const pkg = JSON.parse(content)
+  //   const pkg = JSON.parse(content)
 
-    pkg.dependencies = Object.assign(pkg.dependencies, {
-      "lol": "github:makemepulse/lol.js#0.0.4"
-    })
+  //   pkg.dependencies = Object.assign(pkg.dependencies, {
+  //     "lol": "github:makemepulse/lol.js#0.0.4"
+  //   })
 
-    return JSON.stringify(pkg)
+  //   return JSON.stringify(pkg)
 
-  })
+  // })
 
 }

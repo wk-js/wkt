@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const Boilerplate  = require('../lib')
+// const Boilerplate  = require('../lib')
 const { basename } = require('path')
 const { Parser }   = require('wk-argv-parser')
 
@@ -37,7 +37,53 @@ if (result.params.help) {
   result.config = null
   result.set( result.valid_params )
 
-  const boilerplate = new Boilerplate( result.params.boilerplate, result.params )
-  boilerplate.make( result.params.destination )
+  // const boilerplate = new Boilerplate( result.params.boilerplate, result.params )
+  // boilerplate.make( result.params.destination )
+
+  /**
+   * Steps
+   *
+   * 1) Initialize main boilerplate
+   * 2) Add boilerplate children
+   * 3) Inside each boilerplate child, you can add dependent boilerplate
+   */
+
+  const Boilerplate = require('../lib/boilerplate')
+
+  const boilerplate = new Boilerplate( result.params.boilerplate )
+
+  boilerplate.output = result.params.destination
+
+  if (boilerplate.validate()) {
+    boilerplate.setup()
+    boilerplate.cconfigure()
+    .then(boilerplate.mmake)
+    .then(boilerplate.save)
+  }
 
 }
+
+
+// const Resolver = require('../lib/resolver')
+
+// const resolver = new Resolver( '.tmp/test' )
+// resolver.configure.add( 'git@github.com:wk-js/starter-vue.git#boilerplate' )
+// .then( resolver.make )
+// .then( resolver.save )
+
+
+// console.log( boilerplate )
+
+// boilerplate.cconfigure().then(() => {
+
+// })
+
+// resolver.make()
+
+// const Boilerplate = require('../lib/boilerplate')
+
+// const bp = new Boilerplate( 'git@github.com:wk-js/starter-vue.git#boilerplate' )
+
+// if (bp.valid) {
+//   bp.fetchFiles()
+// }

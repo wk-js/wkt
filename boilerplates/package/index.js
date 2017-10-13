@@ -6,8 +6,8 @@ module.exports = function() {
     this.module( require('../workflow/modules/package.js') )
   })
 
-  this.chunk.after('Wkfile', 'Wkfile:package', function() {
-    wk.require('bump', true)
-  })
+  // this.chunk.after('Wkfile', 'Wkfile:package', function() {
+  //   wk.require('bump', true)
+  // })
 
 }
