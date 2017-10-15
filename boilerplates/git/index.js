@@ -1,9 +1,11 @@
 'use strict'
 
-module.exports = function() {
+module.exports = {
+  configure() {
 
-  this.chunk.after('application:module', 'application:module:git', function() {
-    this.module( require('../workflow/modules/git.js') )
-  })
+    this.chunk('application:module').add('application:module:git', function() {
+      this.module( require('../workflow/modules/git.js') )
+    })
 
+  }
 }

@@ -1,7 +1,6 @@
 'use strict'
 
-module.exports = function() {
-
-  this.name = 'application_base'
-
+module.exports = {
+  name: 'application_base',
+  configure: function() {}
 }
