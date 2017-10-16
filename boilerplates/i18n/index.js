@@ -3,7 +3,7 @@
 module.exports = {
   configure() {
 
-    this.chunk('application:setup').add('application:setup:i18n', function() {
+    this.chunks.add('application:setup', function() {
       this.config.i18n.default_locale = 'en'
       this.config.i18n.locales.push( 'en', 'fr' )
       this.config.i18n.load_path.push(
@@ -11,7 +11,7 @@ module.exports = {
       )
     })
 
-    this.chunk('application:module').add('application:module:i18n', function() {
+    this.chunks.add('application:module', function() {
       this.module( require('../workflow/modules/i18n.js') )
     })
 

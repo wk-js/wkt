@@ -15,6 +15,9 @@
     "js-beautify": "^1.7.4",
     "lodash.template": "^4.4.0",
     "lol": "github:makemepulse/lol.js#0.0.4",
+    "npm": "^5.5.1",
+    "npm-package-arg": "^5.1.2",
+    "realize-package-specifier": "^3.0.3",
     "when": "^3.7.8",
     "wk-argv-parser": "github:wk-js/argv-parser"
   },

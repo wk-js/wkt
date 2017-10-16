@@ -3,7 +3,7 @@
 module.exports = {
   configure() {
 
-    this.chunk('application:module').add('application:module:git', function() {
+    this.chunks.add('application:module', function() {
       this.module( require('../workflow/modules/git.js') )
     })
 

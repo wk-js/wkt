@@ -91,6 +91,5 @@
 
 const Manager = new (require('../lib/manager'))
 
-Manager.add( 'git@github.com:wk-js/starter-vue.git#boilerplate' )
-
-Manager.execute()
+Manager.add( 'github:wk-js/starter-vue#boilerplate' )
+.then(Manager.execute)
