@@ -7,9 +7,9 @@ const { Parser }   = require('wk-argv-parser')
 
 const { result, errors } = Parser.command('boilerplate')
 
-// --destination, --output, -o
-.string('ouput', process.cwd())
-.alias('ouput', [ 'o' ])
+// --output, -o
+.string('output', process.cwd())
+.alias('output', [ 'o' ])
 
 // --help, -h
 .help()
