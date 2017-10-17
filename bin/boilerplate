@@ -91,5 +91,6 @@
 
 const Manager = new (require('../lib/manager'))
 
-Manager.add( 'github:wk-js/starter-vue#boilerplate' )
+Manager
+.add( 'github:wk-js/starter-vue#boilerplate' )
 .then(Manager.execute)

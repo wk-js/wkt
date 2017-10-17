@@ -1,9 +1,11 @@
 'use strict'
 
-module.exports = function() {
+module.exports = {
+  configure() {
 
-  this.chunk.after('application:module', 'application:module:environment', function() {
-    this.module( require('../workflow/modules/environment.js') )
-  })
+    this.chunks.add('application:module', function() {
+      this.module( require('../workflow/modules/environment.js') )
+    })
 
+  }
 }

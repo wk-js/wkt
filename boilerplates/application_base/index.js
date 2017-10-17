@@ -2,5 +2,5 @@
 
 module.exports = {
   name: 'application_base',
-  configure: function() {}
+  configure() {}
 }

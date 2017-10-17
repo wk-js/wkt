@@ -1,13 +1,15 @@
 'use strict'
 
-module.exports = function() {
+module.exports = {
+  configure() {
 
-  this.chunk.after('application:module', 'application:module:package', function() {
-    this.module( require('../workflow/modules/package.js') )
-  })
+    this.chunks.add('application:module', function() {
+      this.module( require('../workflow/modules/package.js') )
+    })
 
-  // this.chunk.after('Wkfile', 'Wkfile:package', function() {
-  //   wk.require('bump', true)
-  // })
+    this.chunks.after('Wkfile', function() {
+      wk.require('bump', true)
+    })
 
+  }
 }
