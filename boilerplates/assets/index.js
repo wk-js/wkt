@@ -1,6 +1,11 @@
 'use strict'
 
 module.exports = {
+
+  name: 'assets',
+
+  dependencies() {},
+
   configure() {
 
     this.chunks.before('application:setup', function() {
