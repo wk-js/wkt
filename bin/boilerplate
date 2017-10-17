@@ -8,8 +8,8 @@ const { Parser }   = require('wk-argv-parser')
 const { result, errors } = Parser.command('boilerplate')
 
 // --destination, --output, -o
-.string('destination', process.cwd())
-.alias('destination', [ 'o', 'output' ])
+.string('ouput', process.cwd())
+.alias('ouput', [ 'o' ])
 
 // --help, -h
 .help()
@@ -32,8 +32,7 @@ if (result.params.help) {
   result.config = null
   result.set( result.valid_params )
 
-  const manager  = new Manager
-  manager.output = result.params.destination
+  const manager = new Manager( result.params )
   result.params._.forEach(bp => manager.add(bp))
   manager.execute()
 
