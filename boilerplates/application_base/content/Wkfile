@@ -1,5 +1,0 @@
-'use strict'
-
-wk.require.paths.push(process.cwd() + '/workflow/tasks')
-
-<%= CHUNKS['Wkfile'].join('\n\n') %>

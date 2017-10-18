@@ -36,4 +36,13 @@ if (result.params.help) {
   result.params._.forEach(bp => manager.add(bp))
   manager.execute()
 
+  // const git = require('../lib/git')
+  // const boilerplate = 'application_base'
+
+  // git.sparsecheckout({
+  //   tmp: `.tmp/${boilerplate}`,
+  //   remote: `git@github.com:wk-js/boilerplates.git`,
+  //   directory: `${boilerplate}`
+  // })
+
 }
