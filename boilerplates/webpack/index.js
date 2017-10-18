@@ -7,8 +7,8 @@ module.exports = {
       this.module( require('../workflow/modules/webpack.js') )
     })
 
-    this.chunks.after('Wkfile', function() {
-      wk.require('./workflow/webpack/tasks/webpack' , true)
+    this.chunks.after('Wkfile', 'Wkfile:webpack', function() {
+      wk.require('./workflow/webpack/tasks/webpack', true)
 
       task('compile', [ 'assets:move', 'webpack' ])
       task('watch'  , [ 'assets:move', 'webpack --watch' ])

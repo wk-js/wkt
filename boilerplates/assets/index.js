@@ -8,7 +8,7 @@ module.exports = {
 
   configure() {
 
-    this.chunks.before('application:setup', function() {
+    this.chunks.before('application:setup', 'application:setup:assets', function() {
 
       this.assets.LOAD_PATH          = './app'
       this.assets.DST_PATH           = './public'
@@ -18,12 +18,12 @@ module.exports = {
 
     })
 
-    this.chunks.after('application:module', function() {
+    this.chunks.after('application:module', 'application:module:assets', function() {
       this.module( require('../workflow/modules/assets.js') )
     })
 
-    this.chunks.after('Wkfile', function() {
-      wk.require('assets'  , true)
+    this.chunks.after('Wkfile', 'Wkfile:assets', function() {
+      wk.require('assets', true)
     })
 
     this.file('package.json', function(content) {

@@ -3,7 +3,7 @@
 module.exports = {
   configure() {
 
-    this.chunks.add('Wkfile', function() {
+    this.chunks.add('Wkfile:templates', function() {
       wk.require('template', true)
     })
 

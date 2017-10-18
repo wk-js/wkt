@@ -3,11 +3,11 @@
 module.exports = {
   configure() {
 
-    this.chunks.add('application:module', function() {
+    this.chunks.add('application:module:bump', function() {
       this.module( require('../workflow/modules/bump.js') )
     })
 
-    this.chunks.after('Wkfile', function() {
+    this.chunks.add('Wkfile:bump', function() {
       wk.require('bump', true)
     })
 

@@ -1,9 +1,7 @@
 'use strict'
 
 module.exports = {
-  name: 'application_base',
-
+  name: '_skeleton',
   dependencies() {},
-
   configure() {}
 }
