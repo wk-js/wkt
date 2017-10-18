@@ -4,7 +4,7 @@ module.exports = {
   configure() {
 
     this.chunks.add('application:module:bump', function() {
-      this.module( require('../workflow/modules/bump.js') )
+      this.module( require('../workflow/modules/package.js') )
     })
 
     this.chunks.add('Wkfile:bump', function() {

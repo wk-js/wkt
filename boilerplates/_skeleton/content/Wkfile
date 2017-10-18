@@ -2,4 +2,4 @@
 
 wk.require.paths.push(process.cwd() + '/workflow/tasks')
 
-{{ chunk('Wkfile').join('\n\n') }}
+{{ chunk('Wkfile') }}

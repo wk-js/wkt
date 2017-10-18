@@ -18,11 +18,11 @@ module.exports = {
 
     })
 
-    this.chunks.after('application:module', 'application:module:assets', function() {
+    this.chunks.before('application:module', 'application:module:assets', function() {
       this.module( require('../workflow/modules/assets.js') )
     })
 
-    this.chunks.after('Wkfile', 'Wkfile:assets', function() {
+    this.chunks.add('Wkfile:assets', function() {
       wk.require('assets', true)
     })
 
