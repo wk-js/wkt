@@ -34,7 +34,7 @@ if (result.params.help) {
 
   const manager = new Manager( result.params )
   result.params._.forEach(bp => manager.add(bp))
-  manager.execute()
+  manager.stack.execute( manager )
 
   // const git = require('../lib/git')
   // const boilerplate = 'application_base'

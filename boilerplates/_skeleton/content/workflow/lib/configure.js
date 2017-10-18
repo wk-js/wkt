@@ -125,32 +125,41 @@ class Configure {
 
     reducer = reducer || NOOP
 
+    const scope   = this
     const order   = this.order
     const ignores = this.ignores
     const tasks   = this.tasks
     const results = this.results
 
     this._promise = when.reduce(order, (res, name) => {
-      if (ignores.indexOf(name) != -1) return
-
-      let value
-
-      if (typeof tasks[name] === 'function') {
-        value = tasks[name].call( context )
-      } else {
-        value = tasks[name]
+      if (ignores.indexOf(name) != -1) {
+        scope.logger(`Ignore ${name}`)
+        return
       }
 
-      value = reducer( value )
+      try {
+        scope.logger(`Execute ${name}`)
+        let value
 
-      if (when.isPromiseLike(value)) {
-        value.then(val => results.push( val ))
-      } else {
-        results.push( value )
+        if (typeof tasks[name] === 'function') {
+          value = tasks[name].call( context )
+        } else {
+          value = tasks[name]
+        }
+
+        value = reducer( value )
+
+        if (when.isPromiseLike(value)) {
+          value.then(val => results.push( val ))
+        } else {
+          results.push( value )
+        }
+
+        return value
+      } catch(e) {
+        scope.logger(`Execute ${name} [FAILED]`)
+        scope.logger(e)
       }
-
-      return value
-
     }, null).then(() => {
       return results
     })
@@ -167,26 +176,6 @@ class Configure {
     if (!this.silent) console.log.apply(null, arguments)
   }
 
-  /**
-   *
-   *
-   * @param {any} key
-   * @returns
-   * @memberof Configure
-   */
-  get(key) {
-    const regex = new RegExp(`^${key}`)
-
-    return this.order
-
-    .filter((k) => {
-      return k.match(regex)
-    })
-
-    .map((k) => {
-      return this.tasks[k]
-    })
-  }
 }
 
 module.exports = Configure
