@@ -1,0 +1,4 @@
+'use strict'
+
+wk.require.paths.push(process.cwd() + '/workflow/tasks')
+

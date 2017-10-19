@@ -33,8 +33,14 @@ if (result.params.help) {
   result.set( result.valid_params )
 
   const manager = new Manager( result.params )
+
+  manager.add( `${__dirname}/../lib/renderer` )
   result.params._.forEach(bp => manager.add(bp))
-  manager.stack.execute( manager )
+
+  manager.execute()
+
+  // const manager = new Manager( result.params )
+  // manager.stack.execute( manager )
 
   // const git = require('../lib/git')
   // const boilerplate = 'application_base'
