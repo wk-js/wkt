@@ -122,6 +122,84 @@ module.exports = {
 }
 ```
 
+# Add chunks
+
+```js
+// index.js
+
+module.exports = {
+
+  name: 'custom_boilerplate',
+
+  initialize() {},
+
+  methods: {
+    configure() {
+      this.chunks.add('application:setup', function() {
+        console.log('setup')
+      })
+
+      this.chunks.add('application:modules:module1', function() {
+        console.log('module1')
+      })
+
+      this.chunks.add('application:modules:module2', function() {
+        console.log('module2')
+      })
+
+      this.chunks.before('application:modules', 'application:modules:module0', function() {
+        console.log('module0')
+      })
+
+      this.chunks.after('application:modules', 'application:modules:module3', function() {
+        console.log('module3')
+      })
+
+      this.chunks.add('application:modules:hello', function() {
+        console.log('hello')
+      })
+    }
+  }
+
+}
+```
+
+```js
+// content/file.js
+
+// Add every 'application:setup*' chunks
+{{ chunk('application:setup')    }}
+
+// Add every 'application:modules:module*' chunks
+{{ chunk('application:modules:module')  }}
+
+// Add every 'application:modules*' chunks
+{{ chunk('application:modules')  }}
+```
+
+Result
+
+```js
+
+// Add every 'application:setup*' chunks
+console.log('setup')
+
+// Add every 'application:modules:module*' chunks
+console.log('module0')
+console.log('module1')
+console.log('module2')
+console.log('module3')
+
+// Add every 'application:modules*' chunks
+console.log('module0')
+console.log('module1')
+console.log('module2')
+console.log('module3')
+console.log('hello')
+```
+
+
+
 # Create a workflow
 
 A boilerplate component can also be used as workflow. You can write your own workflow and steps.
