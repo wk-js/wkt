@@ -11,6 +11,10 @@ const { result, errors } = Parser.command('boilerplate')
 .string('output', process.cwd())
 .alias('output', [ 'o' ])
 
+// --list, -l
+.boolean('list', false)
+.alias('list', [ 'l' ])
+
 // --help, -h
 .help()
 
@@ -34,21 +38,13 @@ if (result.params.help) {
 
   const manager = new Manager( result.params )
 
-  manager.add( `${__dirname}/../lib/renderer` )
+  if (result.params.list) {
+    manager.add( `${__dirname}/../lib/list` )
+  } else {
+    manager.add( `${__dirname}/../lib/renderer` )
+  }
   result.params._.forEach(bp => manager.add(bp))
 
   manager.execute()
-
-  // const manager = new Manager( result.params )
-  // manager.stack.execute( manager )
-
-  // const git = require('../lib/git')
-  // const boilerplate = 'application_base'
-
-  // git.sparsecheckout({
-  //   tmp: `.tmp/${boilerplate}`,
-  //   remote: `git@github.com:wk-js/boilerplates.git`,
-  //   directory: `${boilerplate}`
-  // })
 
 }
