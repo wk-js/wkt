@@ -20,7 +20,12 @@ const { result, errors } = Parser.command('boilerplate')
 // --workflow, -w
 .string('workflow', 'renderer')
 .alias('workflow', [ 'w' ])
-.describe('workflow', 'Set a boilerplate workflow path (default: "boilerplate/lib/renderer/index.js")')
+.describe('workflow', 'Set a boilerplate workflow path (default: "boilerplate/lib/workflows/renderer/index.js")')
+
+// --generate, -g
+.boolean('generate', false)
+.alias('generate', [ 'g' ])
+.describe('generate', 'Generate boilerplate')
 
 // --help, -h
 .help()
@@ -45,13 +50,17 @@ if (result.params.help) {
 
   const manager = new Manager( result.params )
 
-  let workflow = `${__dirname}/../lib/renderer`
+  let workflow = `${__dirname}/../lib/workflows/renderer`
 
   if (result.params.list) {
-    workflow = `${__dirname}/../lib/list`
+    workflow = `${__dirname}/../lib/workflows/list`
   }
 
   manager.add( workflow )
+
+  if (result.params.generate) {
+    manager.add( `${__dirname}/../lib/boilerplates/simple_template` )
+  }
 
   result.params._.forEach(bp => manager.add(bp))
 
