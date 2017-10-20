@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict'
 
-const Manager      = require('../lib/manager')
-const { basename } = require('path')
-const { Parser }   = require('wk-argv-parser')
+const Manager            = require('../lib/manager')
+const { basename, join } = require('path')
+const { Parser }         = require('wk-argv-parser')
 
 const { result, errors } = Parser.command('boilerplate')
 
@@ -50,16 +50,16 @@ if (result.params.help) {
 
   const manager = new Manager( result.params )
 
-  let workflow = `${__dirname}/../lib/workflows/renderer`
+  let workflow = join(`${__dirname}/../lib/workflows/renderer`)
 
   if (result.params.list) {
-    workflow = `${__dirname}/../lib/workflows/list`
+    workflow = join(`${__dirname}/../lib/workflows/list`)
   }
 
   manager.add( workflow )
 
   if (result.params.generate) {
-    manager.add( `${__dirname}/../lib/boilerplates/simple_template` )
+    manager.add( join(`${__dirname}/../lib/boilerplates/simple_template`) )
   }
 
   result.params._.forEach(bp => manager.add(bp))
