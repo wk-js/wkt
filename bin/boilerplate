@@ -10,10 +10,12 @@ const { result, errors } = Parser.command('boilerplate')
 // --output, -o
 .string('output', process.cwd())
 .alias('output', [ 'o' ])
+.describe('output', 'Add output')
 
 // --list, -l
 .boolean('list', false)
 .alias('list', [ 'l' ])
+.describe('list', 'List boilerplates')
 
 // --help, -h
 .help()
