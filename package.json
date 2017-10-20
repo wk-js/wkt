@@ -2,8 +2,12 @@
   "name": "wk-boilerplate",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": {
+    "boilerplate": "bin/boilerplate"
+  },
   "directories": {
+    "bin": "bin",
     "lib": "lib"
   },
   "scripts": {
