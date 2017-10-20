@@ -10,12 +10,17 @@ const { result, errors } = Parser.command('boilerplate')
 // --output, -o
 .string('output', process.cwd())
 .alias('output', [ 'o' ])
-.describe('output', 'Add output')
+.describe('output', `Add output (default: "${process.cwd()}")`)
 
 // --list, -l
 .boolean('list', false)
 .alias('list', [ 'l' ])
-.describe('list', 'List boilerplates')
+.describe('list', 'List boilerplates (default: false)')
+
+// --workflow, -w
+.string('workflow', 'renderer')
+.alias('workflow', [ 'w' ])
+.describe('workflow', 'Set a boilerplate workflow path (default: "boilerplate/lib/renderer/index.js")')
 
 // --help, -h
 .help()
@@ -40,11 +45,14 @@ if (result.params.help) {
 
   const manager = new Manager( result.params )
 
+  let workflow = `${__dirname}/../lib/renderer`
+
   if (result.params.list) {
-    manager.add( `${__dirname}/../lib/list` )
-  } else {
-    manager.add( `${__dirname}/../lib/renderer` )
+    workflow = `${__dirname}/../lib/list`
   }
+
+  manager.add( workflow )
+
   result.params._.forEach(bp => manager.add(bp))
 
   manager.execute()
