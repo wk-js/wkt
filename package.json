@@ -10,12 +10,18 @@
     "filelist": "^0.0.6",
     "lol": "^0.0.6",
     "realize-package-specifier": "^3.0.3",
+    "typescript": "^2.7.0-dev.20171213",
     "when": "^3.7.8",
     "wk-argv-parser": "^0.0.9",
     "wk-print": "^0.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-node": "^4.0.1"
+  },
   "scripts": {
+    "start": "tsc --watch",
+    "compile": "tsc",
+    "tsnode": "ts-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
