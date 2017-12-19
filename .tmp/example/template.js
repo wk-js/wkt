@@ -8,6 +8,6 @@ macro('hello').create(function() {
 rename( 'content/plouf.js', 'content/mdr.js' )
 remove( 'template.js' )
 
-this.stack().insertAfter('bundle', function() {
+stack().insertAfter('bundle', function() {
   // copy( 'content/lol2.js' )
 })
