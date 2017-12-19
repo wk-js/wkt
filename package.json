@@ -7,8 +7,10 @@
     "lib": "lib"
   },
   "dependencies": {
+    "@types/when": "^2.4.29",
     "filelist": "^0.0.6",
-    "lol": "^0.0.6",
+    "fs-extra": "^5.0.0",
+    "lol": "github:makemepulse/lol.js",
     "realize-package-specifier": "^3.0.3",
     "typescript": "^2.7.0-dev.20171213",
     "when": "^3.7.8",
