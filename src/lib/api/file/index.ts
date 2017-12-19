@@ -1,6 +1,6 @@
 import { fetch, ensureDir, copy, remove, move } from "./utils";
 import { join } from "path";
-import { all, reduce } from "when";
+import { all, reduce, promise } from "when";
 import { bind } from "lol/utils/function";
 import { API } from "../index";
 import { Boilerplate } from "../../boilerplate";
@@ -15,16 +15,17 @@ export interface FileAPIItem {
 
 export class FileAPI extends API {
 
-  globs:FileAPIItem[] = []
+  get globs() : FileAPIItem[] {
+    return this.store('globs') ? this.store('globs') : this.store('globs', [])
+  }
 
-  constructor(public boilerplate:Boilerplate) {
-    super(boilerplate)
+  init() {
     bind(['bundle_copy', 'bundle_apply'], this)
     this.copy( '**/*' )
   }
 
   bundle() {
-    this.bundle_copy().then(this.bundle_apply)
+    return this.bundle_copy().then(this.bundle_apply)
   }
 
   helpers() {

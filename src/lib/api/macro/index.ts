@@ -2,7 +2,11 @@ import { API } from "../index";
 
 export class MacroAPI extends API {
 
-  macros: { [key:string]: Function } = {}
+  get macros() {
+    return this.store('macros') ? this.store('macros') : this.store('macros', {})
+  }
+
+  init() {}
 
   bundle() {}
 

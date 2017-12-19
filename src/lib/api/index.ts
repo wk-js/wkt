@@ -2,14 +2,47 @@ import { MixinConstructor } from '../utils/mixin';
 import { Boilerplate } from '../boilerplate';
 import { scope } from 'lol/utils/function'
 import { join } from "path";
+import { reduce, all } from 'when';
+import { Resolver } from '../resolver/index';
+
+const APIResolver = new Resolver<typeof API>((path:string) => {
+  return require( path )
+})
+
+export interface APIStore {
+  [key: string]: any
+}
 
 export abstract class API {
 
-  constructor(public boilerplate:Boilerplate) {}
+  static Resolver = APIResolver
+
+  stores:APIStore = {}
+
+  constructor(public boilerplate:Boilerplate) {
+    this.init()
+  }
+
+  abstract init() : void
 
   abstract bundle() : void
 
   abstract helpers() : { [key:string]: Function }
+
+  get currentBundle() {
+    return this.boilerplate.currentBundle
+  }
+
+  store(key:string, value?:any) {
+    this.stores[this.currentBundle] = this.stores[this.currentBundle] || {}
+
+    if (arguments.length === 2) {
+      this.stores[this.currentBundle][key] = value
+      return this.stores[this.currentBundle][key]
+    }
+
+    return this.stores[this.currentBundle][key]
+  }
 
   fromSource(str:string) {
     return join( this.boilerplate.src_path, str )
@@ -33,12 +66,12 @@ export abstract class API {
     API.apis[ key ] = api
   }
 
-  static create( boilerplate:Boilerplate ) {
+  static create( boilerplate:Boilerplate, api_list:string[] ) {
     const apis : { [key:string]: API } = {}
     const helpers : { [key:string]: Function } = {}
     let api_class, hlprs
 
-    for (const key in API.apis) {
+    for (const key of api_list) {
       api_class = API.apis[key]
       apis[key] = new api_class( boilerplate )
 
@@ -52,9 +85,21 @@ export abstract class API {
   }
 
   static bundle( boilerplate:Boilerplate ) {
-    for (const key in boilerplate.api.apis) {
-      boilerplate.api.apis[key].bundle()
-    }
+    const keys = Object.keys(boilerplate.api.apis).map(function(key) {
+      return function() {
+        return boilerplate.api.apis[key].bundle()
+      }
+    })
+
+    return reduce(keys, function(res:null, bundle:Function) {
+      return bundle()
+    }, null)
+  }
+
+  static resolve(paths:string[]) {
+    return all(paths.map(function(path) {
+      return API.Resolver.resolve(path)
+    }))
   }
 
 }

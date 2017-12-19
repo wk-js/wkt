@@ -3,6 +3,8 @@ import { Configure, ConfigureAction } from "../../stack/configure";
 
 export class StackAPI extends API {
 
+  init() {}
+
   bundle() {}
 
   helpers() {
