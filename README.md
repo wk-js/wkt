@@ -1,6 +1,12 @@
 # TODO
 
 ```js
+//api="file"
+//api="macro"
+//api="template"
+//api="stack"
+//source=""
+
 template('file.js', { data: {}, interpreter: new RegExp })
 
 before('bundle', function() {

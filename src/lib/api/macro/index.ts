@@ -1,4 +1,9 @@
+import { Boilerplate } from '../../boilerplate'
 import { API } from "../index";
+
+export function getAPIClass() {
+  return MacroAPI
+}
 
 export class MacroAPI extends API {
 

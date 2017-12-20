@@ -1,5 +1,10 @@
+import { Boilerplate } from '../../boilerplate'
 import { API } from "../index";
-import { Configure, ConfigureAction } from "../../stack/configure";
+import { Configure } from "../../stack/configure";
+
+export function getAPIClass() {
+  return StackAPI
+}
 
 export class StackAPI extends API {
 
@@ -9,7 +14,7 @@ export class StackAPI extends API {
 
   helpers() {
     return {
-      stack:  this.stack,
+      add:    this.add,
       before: this.before,
       after:  this.after
     }
@@ -19,12 +24,34 @@ export class StackAPI extends API {
     return this.boilerplate.stack
   }
 
-  before(key:string, fn:ConfigureAction) {
-    this.boilerplate.stack.insertBefore(key, fn)
+  add(key:string | Function, fn?:Function) {
+    if(!fn) {
+      fn = key as Function
+      this.boilerplate.stack.insert(fn)
+      return
+    }
+
+    this.boilerplate.stack.add(key as string, fn)
   }
 
-  after(key:string, fn:ConfigureAction) {
-    this.boilerplate.stack.insertAfter(key, fn)
+  before(bfore:string, key:string | Function, fn?:Function) {
+    if(!fn) {
+      fn = key as Function
+      this.boilerplate.stack.insertBefore(bfore, fn)
+      return
+    }
+
+    this.boilerplate.stack.before(bfore, key as string, fn)
+  }
+
+  after(after:string, key:string | Function, fn?:Function) {
+    if(!fn) {
+      fn = key as Function
+      this.boilerplate.stack.insertAfter(after, fn)
+      return
+    }
+
+    this.boilerplate.stack.after(after, key as string, fn)
   }
 
 }

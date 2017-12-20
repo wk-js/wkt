@@ -3,6 +3,6 @@
 //api( 'file' )
 //api( 'stack' )
 
-stack().insertAfter('bundle', function() {
+after('bundle', function() {
   remove( 'template.js' )
 })

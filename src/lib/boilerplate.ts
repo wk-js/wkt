@@ -4,16 +4,9 @@ import { Mixin, MixinClass } from './utils/mixin'
 import * as fs from 'fs'
 import * as when from 'when'
 import { setTimeout } from 'timers';
-import { dirname } from 'path';
+import { dirname, relative, join, normalize } from 'path';
 import { bind, scope } from 'lol/utils/function';
-import { FileAPI } from './api/file';
-import { MacroAPI } from './api/macro';
-import { StackAPI } from './api/stack';
 import { Resolver } from './resolver/index';
-
-API.Resolver.register( 'file' , FileAPI  )
-API.Resolver.register( 'macro', MacroAPI )
-API.Resolver.register( 'stack', StackAPI )
 
 function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = true ) {
   let scope = "var helpers = this;\n"
@@ -33,12 +26,27 @@ function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = 
   }
 }
 
-function imports(key:string, content:string) {
+function imports(key:string, content:string, path:string) {
   const line_regex = new RegExp(`//${key}((.+))`, 'gm')
-  const str_regex  = /([\w-]+)/g
+  const str_regex  = /\(.+\)/g
 
   const lines   = content.match( line_regex ) || []
-  const imports = lines.map(line => (line.match(str_regex) as string[])[1])
+  const imports = lines.map(line => {
+    let result = (line.match(str_regex) as string[])[0]
+    result = result.trim().replace(/"|'|`|\(|\)/g, '').trim()
+
+    let pth = join( dirname(path), result )
+    pth = join( process.cwd(), pth )
+
+    try {
+      fs.statSync( pth )
+      return pth
+    } catch(e) {
+      // console.log( e )
+    }
+
+    return result
+  })
 
   return Array.prototype.concat.apply([], imports)
 }
@@ -62,9 +70,9 @@ export class Boilerplate {
   }
 
   constructor(public input:string, public output:string = '.tmp/generated') {
-    bind([ 'parse', 'bundle', 'execute', 'afterTask' ], this)
+    bind([ 'parse', 'execute' ], this)
 
-    this.stack.add( 'bundle', this.bundle )
+    this.stack.add( 'bundle' )
   }
 
   get src_path() {
@@ -97,30 +105,21 @@ export class Boilerplate {
 
     const content: string = fs.readFileSync(this.path, 'utf-8')
 
-    const api_imports = imports( 'api', content )
-    const src_imports = imports( 'source', content )
+    const api_imports = imports( 'api'   , content, this.path )
+    const src_imports = imports( 'source', content, this.path )
 
-    API.resolve( api_imports ).then(function(a) {
-      console.log(a)
+    return API.resolve( api_imports ).then((a) => {
+      this.api = API.create( this, api_imports )
+      parse( this, content )
     })
-
-    // this.api = API.create( this, api_imports )
-
-    // parse( this, content )
   }
 
   execute() {
-    // return this.stack.execute({
-    //   afterTask: this.afterTask
-    // }).then(() => {
-    //   console.log('DONE')
-    // })
-  }
-
-  bundle() {}
-
-  afterTask(result:string) {
-    return API.bundle( this )
+    return this.stack.execute({
+      afterTask: () => API.bundle( this )
+    }).then(() => {
+      console.log('DONE')
+    })
   }
 
 }

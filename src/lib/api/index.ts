@@ -5,8 +5,8 @@ import { join } from "path";
 import { reduce, all } from 'when';
 import { Resolver } from '../resolver/index';
 
-const APIResolver = new Resolver<typeof API>((path:string) => {
-  return require( path )
+const APIResolver = new Resolver<new (...args:any[]) => API>((path:string) => {
+  return require( path ).getAPIClass()
 })
 
 export interface APIStore {
@@ -60,19 +60,13 @@ export abstract class API {
     return src.replace( new RegExp(`^${this.boilerplate.src_path}`), this.boilerplate.dst_path )
   }
 
-  static apis: { [key: string]: new (...args:any[]) => API } = {}
-
-  static register(key:string, api:new (...args:any[]) => API) {
-    API.apis[ key ] = api
-  }
-
   static create( boilerplate:Boilerplate, api_list:string[] ) {
     const apis : { [key:string]: API } = {}
     const helpers : { [key:string]: Function } = {}
     let api_class, hlprs
 
     for (const key of api_list) {
-      api_class = API.apis[key]
+      api_class = API.Resolver.get( key ) as new (...args:any[]) => API
       apis[key] = new api_class( boilerplate )
 
       hlprs = apis[key].helpers()

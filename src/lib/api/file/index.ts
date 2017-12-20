@@ -10,7 +10,11 @@ export interface FileAPIItem {
   file:string,
   action:string,
   context:string,
-  output?:string,
+  output?:string
+}
+
+export function getAPIClass() {
+  return FileAPI
 }
 
 export class FileAPI extends API {
