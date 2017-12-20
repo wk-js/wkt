@@ -4,6 +4,7 @@ import { reduce, all } from 'when'
 import { Renderer } from "./renderer";
 import { createReadStream, createWriteStream } from "fs";
 import { MemoryStream } from "../../utils/memory-stream";
+import { ChunkStack } from './chunk_stack'
 
 export class TemplateAPI extends API {
 
@@ -11,11 +12,7 @@ export class TemplateAPI extends API {
     return this.store('globs') ? this.store('globs') : this.store('globs', [])
   }
 
-  // get chunks() : any {
-  //   return this.store('chunks') ? this.store('chunks') : this.store('chunks', {})
-  // }
-
-  chunks:any = {}
+  chunk_stack:ChunkStack = new ChunkStack
 
   init() {}
 
@@ -26,7 +23,7 @@ export class TemplateAPI extends API {
 
         .then((content:Buffer) => {
           glob.options.imports = {
-            chunk: (key:string) => this.chunks[key] || ''
+            chunk: (key:string) => this.chunk_stack.get(key) || ''
           }
           return Renderer.render( content.toString('utf-8'), glob.options, glob.options.data )
         })
@@ -43,7 +40,9 @@ export class TemplateAPI extends API {
   helpers() {
     return {
       template: this.template,
-      chunk: this.chunk
+      chunkAdd: this.chunkAdd,
+      chunkBefore: this.chunkBefore,
+      chunkAfter: this.chunkAfter
     }
   }
 
@@ -55,8 +54,16 @@ export class TemplateAPI extends API {
     this.globs.push({ file, options })
   }
 
-  chunk(key:string, value:any) {
-    this.chunks[key] = value
+  chunkAdd(key:string, chunk:string) {
+    this.chunk_stack.add( key, chunk )
+  }
+
+  chunkBefore(bfore:string, key:string, chunk:string) {
+    this.chunk_stack.before( bfore, key, chunk )
+  }
+
+  chunkAfter(after:string, key:string, chunk:string) {
+    this.chunk_stack.after( after, key, chunk )
   }
 
 }

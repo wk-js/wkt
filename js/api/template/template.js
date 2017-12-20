@@ -4,13 +4,11 @@ const __1 = require("..");
 const utils_1 = require("../file/utils");
 const when_1 = require("when");
 const renderer_1 = require("./renderer");
+const chunk_stack_1 = require("./chunk_stack");
 class TemplateAPI extends __1.API {
     constructor() {
         super(...arguments);
-        // get chunks() : any {
-        //   return this.store('chunks') ? this.store('chunks') : this.store('chunks', {})
-        // }
-        this.chunks = {};
+        this.chunk_stack = new chunk_stack_1.ChunkStack;
     }
     get globs() {
         return this.store('globs') ? this.store('globs') : this.store('globs', []);
@@ -22,7 +20,7 @@ class TemplateAPI extends __1.API {
                 return utils_1.readFile(file)
                     .then((content) => {
                     glob.options.imports = {
-                        chunk: (key) => this.chunks[key] || ''
+                        chunk: (key) => this.chunk_stack.get(key) || ''
                     };
                     return renderer_1.Renderer.render(content.toString('utf-8'), glob.options, glob.options.data);
                 })
@@ -36,7 +34,9 @@ class TemplateAPI extends __1.API {
     helpers() {
         return {
             template: this.template,
-            chunk: this.chunk
+            chunkAdd: this.chunkAdd,
+            chunkBefore: this.chunkBefore,
+            chunkAfter: this.chunkAfter
         };
     }
     template(file, options) {
@@ -45,8 +45,14 @@ class TemplateAPI extends __1.API {
         }, options || {});
         this.globs.push({ file, options });
     }
-    chunk(key, value) {
-        this.chunks[key] = value;
+    chunkAdd(key, chunk) {
+        this.chunk_stack.add(key, chunk);
+    }
+    chunkBefore(bfore, key, chunk) {
+        this.chunk_stack.before(bfore, key, chunk);
+    }
+    chunkAfter(after, key, chunk) {
+        this.chunk_stack.after(after, key, chunk);
     }
 }
 exports.TemplateAPI = TemplateAPI;
