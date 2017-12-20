@@ -68,6 +68,7 @@ export class Boilerplate {
     apis:    { [key:string]: API }
     helpers: { [key:string]: Function }
   }
+  children: Boilerplate[] = []
 
   constructor(public input:string, public output:string = '.tmp/generated') {
     bind([ 'parse', 'execute' ], this)
@@ -83,7 +84,7 @@ export class Boilerplate {
     return this.output
   }
 
-  get currentBundle() {
+  get current_bundle() {
     return this.stack.currentTask ? this.stack.currentTask : 'bundle'
   }
 
@@ -103,22 +104,59 @@ export class Boilerplate {
   parse(pth:string) {
     this.path = pth
 
+    const scope = this
     const content: string = fs.readFileSync(this.path, 'utf-8')
 
-    const api_imports = imports( 'api'   , content, this.path )
-    const src_imports = imports( 'source', content, this.path )
+    return when.reduce([
+      function() { return scope.resolveSources( content ) },
+      function() { return scope.resolveAPIs( content ) }
+    ], (res:null, action:Function) => action(), null)
+  }
 
-    return API.resolve( api_imports ).then((a) => {
+  resolveAPIs(content:string) {
+    const api_imports = imports( 'api'   , content, this.path )
+
+    return when.all(api_imports.map(function(path:string) {
+      return API.Resolver.resolve(path)
+    }))
+
+    .then(() => {
       this.api = API.create( this, api_imports )
       parse( this, content )
     })
   }
 
+  resolveSources(content:string) {
+    const src_imports = imports( 'source', content, this.path )
+
+    return when.all(src_imports.map(function(path:string) {
+      return Boilerplate.Resolver.resolve(path)
+    }))
+
+    .then((paths:string[]) => {
+      const boilerplates = paths.map((path:string) => {
+        return new Boilerplate( path, this.output )
+      })
+
+      this.children = this.children.concat( boilerplates )
+
+      return when.all(boilerplates.map((bp:Boilerplate) => bp.resolve()))
+    })
+  }
+
   execute() {
-    return this.stack.execute({
-      afterTask: () => API.bundle( this )
-    }).then(() => {
-      console.log('DONE')
+    return when.reduce(this.children.map((bp:Boilerplate) => {
+      return bp.execute
+    }), (res:null, action:Function) => action(), null)
+
+    .then(() => {
+      return this.stack.execute({
+        afterTask: () => API.bundle( this )
+      })
+    })
+
+    .then(() => {
+      console.log(`Bundle "${this.input}" done!`)
     })
   }
 

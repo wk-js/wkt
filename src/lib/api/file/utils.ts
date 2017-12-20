@@ -1,5 +1,6 @@
 import { createReadStream, createWriteStream, unlink, statSync, mkdir, mkdirSync, unlinkSync } from "fs";
 import { promise, all, reduce } from "when";
+import * as when from "when";
 import { FileList } from "filelist";
 import { normalize, dirname } from "path";
 
@@ -81,6 +82,8 @@ export function rename(fromFile:string, toFile:string) {
 
 export function ensureDir(path:string) {
   path = normalize(path)
+
+  if (isDirectory(path)) return when(path)
 
   const dirs = path.split( '/' )
 

@@ -1,6 +1,6 @@
-import { FileAPI } from './api/file';
-import { MacroAPI } from './api/macro';
-import { StackAPI } from './api/stack';
+import { FileAPI } from './api/file/file';
+import { MacroAPI } from './api/macro/macro';
+import { StackAPI } from './api/stack/stack';
 import { Boilerplate } from './boilerplate';
 import { API } from './api';
 

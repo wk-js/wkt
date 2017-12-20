@@ -6,7 +6,7 @@ import { reduce, all } from 'when';
 import { Resolver } from '../resolver/index';
 
 const APIResolver = new Resolver<new (...args:any[]) => API>((path:string) => {
-  return require( path ).getAPIClass()
+  return require( path )
 })
 
 export interface APIStore {
@@ -29,19 +29,19 @@ export abstract class API {
 
   abstract helpers() : { [key:string]: Function }
 
-  get currentBundle() {
-    return this.boilerplate.currentBundle
+  get current_bundle() {
+    return this.boilerplate.current_bundle
   }
 
   store(key:string, value?:any) {
-    this.stores[this.currentBundle] = this.stores[this.currentBundle] || {}
+    this.stores[this.current_bundle] = this.stores[this.current_bundle] || {}
 
     if (arguments.length === 2) {
-      this.stores[this.currentBundle][key] = value
-      return this.stores[this.currentBundle][key]
+      this.stores[this.current_bundle][key] = value
+      return this.stores[this.current_bundle][key]
     }
 
-    return this.stores[this.currentBundle][key]
+    return this.stores[this.current_bundle][key]
   }
 
   fromSource(str:string) {
