@@ -1,15 +1,23 @@
 'use strict'
 
 //api('stack')
+//api('template')
 //api('file')
 //api('prompt')
 
 before('prompt', function() {
   prompt('What is your name ?', 'name')
-  ask('Are you a boy ?', 'is_boy')
 })
 
+rename( 'example.js', 'test.js' )
+
+chunk('some code', `
+var test = "test";
+console.log( test )
+`)
+
 after('bundle', function() {
-  console.log( `Your name is ${answer('name')}. You are a boy : ${answer('is_boy')}` )
-  rename( 'example.js', 'test.js' )
+  template('test.js', {
+    data: { name: answer('name') }
+  })
 })

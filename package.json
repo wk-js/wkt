@@ -2,13 +2,19 @@
   "name": "boilerplate",
   "version": "0.0.1",
   "description": "",
-  "main": "lib/index.js",
+  "main": "js/index.js",
+  "types": "js/index.d.ts",
   "directories": {
-    "lib": "lib"
+    "bin":      "bin",
+    "api":      "js/api",
+    "resolver": "js/resolver",
+    "stack":    "js/stack",
+    "utils":    "js/utils"
   },
   "dependencies": {
     "filelist": "^0.0.6",
     "fs-extra": "^5.0.0",
+    "lodash.template": "^4.4.0",
     "lol": "github:makemepulse/lol.js",
     "realize-package-specifier": "^3.0.3",
     "typescript": "^2.7.0-dev.20171213",

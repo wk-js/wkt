@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+'use strict'
+
+const { Boilerplate } = require('../js')
+const { Parser }      = require('wk-argv-parser')
+const { basename }    = require('path')
+
+const { result, errors } = Parser.command('boilerplate')
+
+.string('input', './template.js')
+.index('input', 0)
+.describe('input', `Add input (default: "${process.cwd()}")`)
+
+.string('output', './generated')
+.index('output', 1)
+.describe('output', `Add output (default: "${process.cwd()}")`)
+
+// --help, -h
+.help()
+
+// Parse arguments
+.parse(process.argv.slice(2).join(' '))
+
+// Display help
+if (result.params.help) {
+  console.log(basename(__filename), result.config.help.description)
+}
+
+// Errors
+else if (errors) {
+  const errors_str = errors.map((err) => {
+    return `${err.message} [missings: ${err.missings.join(', ')}]`
+  }).join('\n')
+
+  console.log(errors_str)
+}
+
+// Resolve and execute the boilerplate
+else {
+  result.config = null
+  result.set( result.valid_params )
+
+  const bp = new Boilerplate( result.params.input, result.params.output )
+  bp.resolve().then( bp.execute )
+}

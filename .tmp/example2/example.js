@@ -1,1 +1,2 @@
-console.log('lol')
+console.log('Hello <%= name %> !')
+<%= chunk('some code') %>
