@@ -20,31 +20,16 @@ class StackAPI extends index_1.API {
         return this.boilerplate.stack;
     }
     add(key, fn) {
-        if (!fn) {
-            fn = key;
-            this.boilerplate.stack.insert(fn);
-            return;
-        }
         this.boilerplate.stack.add(key, fn);
     }
     before(bfore, key, fn) {
-        if (!fn) {
-            fn = key;
-            this.boilerplate.stack.insertBefore(bfore, fn);
-            return;
-        }
         this.boilerplate.stack.before(bfore, key, fn);
     }
     after(after, key, fn) {
-        if (!fn) {
-            fn = key;
-            this.boilerplate.stack.insertAfter(after, fn);
-            return;
-        }
         this.boilerplate.stack.after(after, key, fn);
     }
     invocator() {
-        return this.boilerplate.invocator.stack;
+        return this.boilerplate.root.stack;
     }
 }
 exports.StackAPI = StackAPI;

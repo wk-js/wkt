@@ -18,12 +18,14 @@ export declare class Boilerplate {
             [key: string]: Function;
         };
     };
+    parent: Boilerplate | null;
     children: Boilerplate[];
-    invocator: Boilerplate | null;
     constructor(input: string, output: string);
     readonly src_path: string;
     readonly dst_path: string;
     readonly current_bundle: string;
+    readonly root: Boilerplate;
+    readonly is_root: boolean;
     config(key: string, value?: any): any | undefined;
     resolve(): any;
     parse(pth: string): any;

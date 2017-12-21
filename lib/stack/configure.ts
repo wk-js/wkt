@@ -26,40 +26,64 @@ export class Configure extends Order {
     this.tasks[key] = action || this.tasks[key] || NOOP
   }
 
-  add( key:string, action?:Function ) {
+  add( key:string | Function, action?:Function ) {
     if (this.running) return;
-    super.add( key )
-    this._addTask( key, action )
+
+    if (typeof key === 'function') {
+      action = key as Function
+      key = this.generateName( '_#add' )
+    }
+
+    super.add( key as string )
+    this._addTask( key as string, action )
   }
 
-  before( bfore:string, key:string, action?:Function ) {
+  before( bfore:string, key:string | Function, action?:Function ) {
     if (this.running) return;
-    super.before( bfore, key )
-    this._addTask( key, action )
+
+    if (typeof key === 'function') {
+      action = key as Function
+      key = this.generateName( bfore+'#before' )
+    }
+
+    super.before( bfore, key as string )
+    this._addTask( key as string, action )
   }
 
-  after( after:string, key:string, action?:Function ) {
+  after( after:string, key:string | Function, action?:Function ) {
     if (this.running) return;
-    super.after( after, key )
-    this._addTask( key, action )
+
+    if (typeof key === 'function') {
+      action = key as Function
+      key = this.generateName( after+'#after' )
+    }
+
+    super.after( after, key as string )
+    this._addTask( key as string, action )
   }
 
-  insert( action?:Function ) {
+  first( key:string | Function, action?:Function ) {
     if (this.running) return;
-    const key = this.generateName( '_#add' )
-    this.add( key, action )
+
+    if (typeof key === 'function') {
+      action = key as Function
+      key = this.generateName( '_#first' )
+    }
+
+    super.first( key as string )
+    this._addTask( key as string, action )
   }
 
-  insertBefore( bfore:string, action?:Function ) {
+  last( key:string | Function, action?:Function ) {
     if (this.running) return;
-    const key = this.generateName( bfore+'#before' )
-    this.before( bfore, key, action )
-  }
 
-  insertAfter( after:string, action?:Function ) {
-    if (this.running) return;
-    const key = this.generateName( after+'#after' )
-    this.after( after, key, action )
+    if (typeof key === 'function') {
+      action = key as Function
+      key = this.generateName( '_#last' )
+    }
+
+    super.last( key as string )
+    this._addTask( key as string, action )
   }
 
   execute(hooks?:any) {

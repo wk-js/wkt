@@ -68,8 +68,9 @@ export class Boilerplate {
     apis:    { [key:string]: API }
     helpers: { [key:string]: Function }
   }
+
+  parent:Boilerplate | null = null
   children: Boilerplate[] = []
-  invocator:Boilerplate | null = null
 
   constructor(public input:string, public output:string) {
     bind([ 'parse', 'execute' ], this)
@@ -86,6 +87,14 @@ export class Boilerplate {
 
   get current_bundle() {
     return this.stack.currentTask ? this.stack.currentTask : 'bundle'
+  }
+
+  get root() : Boilerplate {
+    return this.parent ? this.parent.root : this
+  }
+
+  get is_root() : boolean {
+    return this.root === this
   }
 
   config(key: string, value?: any) : any | undefined {
@@ -136,8 +145,7 @@ export class Boilerplate {
     .then((paths:string[]) => {
       const boilerplates = paths.map((path:string) => {
         const bp = new Boilerplate( path, this.output )
-        const invocator = this.invocator || this
-        bp.invocator = invocator
+        bp.parent = this
         return bp
       })
 

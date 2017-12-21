@@ -26,37 +26,19 @@ export class StackAPI extends API {
   }
 
   add(key:string | Function, fn?:Function) {
-    if(!fn) {
-      fn = key as Function
-      this.boilerplate.stack.insert(fn)
-      return
-    }
-
-    this.boilerplate.stack.add(key as string, fn)
+    this.boilerplate.stack.add(key, fn)
   }
 
   before(bfore:string, key:string | Function, fn?:Function) {
-    if(!fn) {
-      fn = key as Function
-      this.boilerplate.stack.insertBefore(bfore, fn)
-      return
-    }
-
-    this.boilerplate.stack.before(bfore, key as string, fn)
+    this.boilerplate.stack.before(bfore, key, fn)
   }
 
   after(after:string, key:string | Function, fn?:Function) {
-    if(!fn) {
-      fn = key as Function
-      this.boilerplate.stack.insertAfter(after, fn)
-      return
-    }
-
-    this.boilerplate.stack.after(after, key as string, fn)
+    this.boilerplate.stack.after(after, key, fn)
   }
 
   invocator() {
-    return (this.boilerplate.invocator as Boilerplate).stack
+    return this.boilerplate.root.stack
   }
 
 }

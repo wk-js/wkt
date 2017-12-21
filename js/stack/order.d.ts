@@ -10,6 +10,8 @@ export declare class Order {
     before(bfore: string, key: string): void;
     after(after: string, key: string): void;
     add(key: string): void;
+    first(key: string): void;
+    last(key: string): void;
     rule(direction: string, keyRule: string, key: string): void;
     refreshRules(): void;
     updateRules(key: string, relative: string, direction: string): void;

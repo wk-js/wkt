@@ -43,6 +43,18 @@ export class Order {
     this.refreshRules()
   }
 
+  first( key:string ) {
+    this.order[0] ?
+    this.before( this.order[0], key ) :
+    this.add( key )
+  }
+
+  last( key:string ) {
+    this.order[this.order.length-1] ?
+    this.after( this.order[this.order.length-1], key ) :
+    this.add( key )
+  }
+
   rule( direction:string, keyRule:string, key:string ) {
     if (this.rules[keyRule][direction].indexOf( key ) === -1) {
       this.rules[keyRule][direction].push( key )

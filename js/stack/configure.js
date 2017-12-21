@@ -21,38 +21,52 @@ class Configure extends order_1.Order {
     add(key, action) {
         if (this.running)
             return;
+        if (typeof key === 'function') {
+            action = key;
+            key = this.generateName('_#add');
+        }
         super.add(key);
         this._addTask(key, action);
     }
     before(bfore, key, action) {
         if (this.running)
             return;
+        if (typeof key === 'function') {
+            action = key;
+            key = this.generateName(bfore + '#before');
+        }
         super.before(bfore, key);
         this._addTask(key, action);
     }
     after(after, key, action) {
         if (this.running)
             return;
+        if (typeof key === 'function') {
+            action = key;
+            key = this.generateName(after + '#after');
+        }
         super.after(after, key);
         this._addTask(key, action);
     }
-    insert(action) {
+    first(key, action) {
         if (this.running)
             return;
-        const key = this.generateName('_#add');
-        this.add(key, action);
+        if (typeof key === 'function') {
+            action = key;
+            key = this.generateName('_#first');
+        }
+        super.first(key);
+        this._addTask(key, action);
     }
-    insertBefore(bfore, action) {
+    last(key, action) {
         if (this.running)
             return;
-        const key = this.generateName(bfore + '#before');
-        this.before(bfore, key, action);
-    }
-    insertAfter(after, action) {
-        if (this.running)
-            return;
-        const key = this.generateName(after + '#after');
-        this.after(after, key, action);
+        if (typeof key === 'function') {
+            action = key;
+            key = this.generateName('_#last');
+        }
+        super.last(key);
+        this._addTask(key, action);
     }
     execute(hooks) {
         const tasks = this.order.map((key) => {

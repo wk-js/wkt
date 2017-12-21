@@ -53,8 +53,8 @@ class Boilerplate {
         this.configs = {};
         this.stack = new configure_1.Configure();
         this.path = '';
+        this.parent = null;
         this.children = [];
-        this.invocator = null;
         function_1.bind(['parse', 'execute'], this);
         this.stack.add('bundle');
     }
@@ -66,6 +66,12 @@ class Boilerplate {
     }
     get current_bundle() {
         return this.stack.currentTask ? this.stack.currentTask : 'bundle';
+    }
+    get root() {
+        return this.parent ? this.parent.root : this;
+    }
+    get is_root() {
+        return this.root === this;
     }
     config(key, value) {
         if (arguments.length == 2) {
@@ -104,8 +110,7 @@ class Boilerplate {
             .then((paths) => {
             const boilerplates = paths.map((path) => {
                 const bp = new Boilerplate(path, this.output);
-                const invocator = this.invocator || this;
-                bp.invocator = invocator;
+                bp.parent = this;
                 return bp;
             });
             this.children = this.children.concat(boilerplates);

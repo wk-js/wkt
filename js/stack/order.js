@@ -33,6 +33,16 @@ class Order {
         this._add(key);
         this.refreshRules();
     }
+    first(key) {
+        this.order[0] ?
+            this.before(this.order[0], key) :
+            this.add(key);
+    }
+    last(key) {
+        this.order[this.order.length - 1] ?
+            this.after(this.order[this.order.length - 1], key) :
+            this.add(key);
+    }
     rule(direction, keyRule, key) {
         if (this.rules[keyRule][direction].indexOf(key) === -1) {
             this.rules[keyRule][direction].push(key);

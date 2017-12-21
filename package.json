@@ -14,6 +14,7 @@
   "dependencies": {
     "filelist": "^0.0.6",
     "fs-extra": "^5.0.0",
+    "js-beautify": "^1.7.5",
     "lodash.template": "^4.4.0",
     "lol": "github:makemepulse/lol.js",
     "realize-package-specifier": "^3.0.3",
