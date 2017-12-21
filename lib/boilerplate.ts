@@ -69,6 +69,7 @@ export class Boilerplate {
     helpers: { [key:string]: Function }
   }
   children: Boilerplate[] = []
+  invocator:Boilerplate | null = null
 
   constructor(public input:string, public output:string) {
     bind([ 'parse', 'execute' ], this)
@@ -134,7 +135,10 @@ export class Boilerplate {
 
     .then((paths:string[]) => {
       const boilerplates = paths.map((path:string) => {
-        return new Boilerplate( path, this.output )
+        const bp = new Boilerplate( path, this.output )
+        const invocator = this.invocator || this
+        bp.invocator = invocator
+        return bp
       })
 
       this.children = this.children.concat( boilerplates )

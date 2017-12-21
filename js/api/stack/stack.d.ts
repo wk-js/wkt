@@ -8,9 +8,11 @@ export declare class StackAPI extends API {
         add: (key: string | Function, fn?: Function | undefined) => void;
         before: (bfore: string, key: string | Function, fn?: Function | undefined) => void;
         after: (after: string, key: string | Function, fn?: Function | undefined) => void;
+        invocator: () => Configure;
     };
     stack(): Configure;
     add(key: string | Function, fn?: Function): void;
     before(bfore: string, key: string | Function, fn?: Function): void;
     after(after: string, key: string | Function, fn?: Function): void;
+    invocator(): Configure;
 }

@@ -19,6 +19,7 @@ export declare class Boilerplate {
         };
     };
     children: Boilerplate[];
+    invocator: Boilerplate | null;
     constructor(input: string, output: string);
     readonly src_path: string;
     readonly dst_path: string;

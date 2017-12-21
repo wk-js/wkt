@@ -54,6 +54,7 @@ class Boilerplate {
         this.stack = new configure_1.Configure();
         this.path = '';
         this.children = [];
+        this.invocator = null;
         function_1.bind(['parse', 'execute'], this);
         this.stack.add('bundle');
     }
@@ -102,7 +103,10 @@ class Boilerplate {
         }))
             .then((paths) => {
             const boilerplates = paths.map((path) => {
-                return new Boilerplate(path, this.output);
+                const bp = new Boilerplate(path, this.output);
+                const invocator = this.invocator || this;
+                bp.invocator = invocator;
+                return bp;
             });
             this.children = this.children.concat(boilerplates);
             return when.all(boilerplates.map((bp) => bp.resolve()));

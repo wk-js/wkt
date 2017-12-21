@@ -12,7 +12,8 @@ class StackAPI extends index_1.API {
         return {
             add: this.add,
             before: this.before,
-            after: this.after
+            after: this.after,
+            invocator: this.invocator
         };
     }
     stack() {
@@ -41,6 +42,9 @@ class StackAPI extends index_1.API {
             return;
         }
         this.boilerplate.stack.after(after, key, fn);
+    }
+    invocator() {
+        return this.boilerplate.invocator.stack;
     }
 }
 exports.StackAPI = StackAPI;

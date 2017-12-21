@@ -5,11 +5,11 @@
   "main": "js/index.js",
   "types": "js/index.d.ts",
   "directories": {
-    "bin":      "bin",
-    "api":      "js/api",
+    "bin": "bin",
+    "api": "js/api",
     "resolver": "js/resolver",
-    "stack":    "js/stack",
-    "utils":    "js/utils"
+    "stack": "js/stack",
+    "utils": "js/utils"
   },
   "dependencies": {
     "filelist": "^0.0.6",

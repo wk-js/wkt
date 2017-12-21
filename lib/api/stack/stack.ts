@@ -16,7 +16,8 @@ export class StackAPI extends API {
     return {
       add:    this.add,
       before: this.before,
-      after:  this.after
+      after:  this.after,
+      invocator: this.invocator
     }
   }
 
@@ -52,6 +53,10 @@ export class StackAPI extends API {
     }
 
     this.boilerplate.stack.after(after, key as string, fn)
+  }
+
+  invocator() {
+    return (this.boilerplate.invocator as Boilerplate).stack
   }
 
 }
