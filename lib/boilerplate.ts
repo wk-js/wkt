@@ -64,10 +64,11 @@ export class Boilerplate {
   configs: { [key: string]: any } = {}
   stack: Configure = new Configure()
   path: string = ''
-  api: {
-    apis:    { [key:string]: API }
-    helpers: { [key:string]: Function }
-  }
+  api: any
+  // api: {
+  //   apis:    { [key:string]: API }
+  //   helpers: { [key:string]: Function }
+  // }
 
   parent:Boilerplate | null = null
   children: Boilerplate[] = []

@@ -4,8 +4,8 @@ export declare class ChunkStack extends Order {
         [key: string]: string;
     };
     _addChunk(key: string, chunk: string): void;
-    add(key: string, chunk: string): void;
-    before(bfore: string, key: string, chunk: string): void;
-    after(after: string, key: string, chunk: string): void;
-    get(key: any): string;
+    add(key: string, chunk?: string): void;
+    before(bfore: string, key: string, chunk?: string): void;
+    after(after: string, key: string, chunk?: string): void;
+    get(key: string): string;
 }

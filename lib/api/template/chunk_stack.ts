@@ -8,22 +8,26 @@ export class ChunkStack extends Order {
     this.chunks[key] = chunk || ''
   }
 
-  add( key:string, chunk:string ) {
+  add( key:string, chunk?:string ) : void
+  add( key:string, chunk:string )  : void {
     super.add( key )
     this._addChunk( key, chunk )
   }
 
-  before( bfore:string, key:string, chunk:string ) {
+  before( bfore:string, key:string, chunk?:string ) : void;
+  before( bfore:string, key:string, chunk:string )  : void{
     super.before( bfore, key )
     this._addChunk( key, chunk )
   }
 
-  after( after:string, key:string, chunk:string ) {
+
+  after( after:string, key:string, chunk?:string ) : void;
+  after( after:string, key:string, chunk:string ) : void {
     super.after( after, key )
     this._addChunk( key, chunk )
   }
 
-  get(key) {
+  get(key:string) {
     const regex = new RegExp(`^${key}`)
 
     return this.order

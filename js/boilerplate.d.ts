@@ -1,4 +1,3 @@
-import { API } from './api/index';
 import { Configure } from './stack/configure';
 import { Resolver } from './resolver/index';
 export declare class Boilerplate {
@@ -10,14 +9,7 @@ export declare class Boilerplate {
     };
     stack: Configure;
     path: string;
-    api: {
-        apis: {
-            [key: string]: API;
-        };
-        helpers: {
-            [key: string]: Function;
-        };
-    };
+    api: any;
     parent: Boilerplate | null;
     children: Boilerplate[];
     constructor(input: string, output: string);

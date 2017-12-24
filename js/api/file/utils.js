@@ -37,9 +37,15 @@ function copy(fromFile, toFile) {
         ensureDir(path_1.dirname(toFile)).then(function () {
             const rs = fs.createReadStream(fromFile);
             const ws = fs.createWriteStream(toFile);
-            ws.on('error', reject);
-            rs.on('error', reject);
-            rs.on('end', resolve);
+            ws.on('error', function () {
+                reject.apply(null, arguments);
+            });
+            rs.on('error', function () {
+                reject.apply(null, arguments);
+            });
+            rs.on('end', function () {
+                resolve.apply(null, arguments);
+            });
             rs.pipe(ws, { end: true });
         });
     });

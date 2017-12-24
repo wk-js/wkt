@@ -26,7 +26,7 @@ export class Resolver<T> {
   }
 
   resolve(pathOrIdOrRepo:string) {
-    return when.promise((resolve, reject) => {
+    return when.promise((resolve:Function, reject:Function) => {
       const iterator = new ResolveIterator([
         this.resolveId,
         this.resolvePath,

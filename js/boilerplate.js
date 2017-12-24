@@ -53,6 +53,10 @@ class Boilerplate {
         this.configs = {};
         this.stack = new configure_1.Configure();
         this.path = '';
+        // api: {
+        //   apis:    { [key:string]: API }
+        //   helpers: { [key:string]: Function }
+        // }
         this.parent = null;
         this.children = [];
         function_1.bind(['parse', 'execute'], this);

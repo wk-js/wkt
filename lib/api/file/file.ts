@@ -109,7 +109,7 @@ export class FileAPI extends API {
           }
         })
 
-        return reduce(files, (r, fn) => fn(), null)
+        return reduce(files, (r:null, fn:Function) => fn(), null)
       })
   }
 

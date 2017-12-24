@@ -1,3 +1,3 @@
 import { ExecAPI } from "./exec";
 
-export ExecAPI
+export default ExecAPI
