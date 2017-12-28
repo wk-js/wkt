@@ -13,6 +13,7 @@ export declare class Subprocess {
     resolve: Function;
     reject: Function;
     status: string;
+    processOptions: any;
     constructor(command: string, options?: any);
     prepare(): void;
     execute(): any;

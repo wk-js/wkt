@@ -15,6 +15,7 @@ export declare abstract class API {
     };
     readonly current_bundle: string;
     store(key: string, value?: any): any;
+    shared_store(key: string, value?: any): any;
     fromSource(str: string): string;
     fromDestination(str: string): string;
     toSource(dst: string): string;

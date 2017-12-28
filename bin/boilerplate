@@ -9,11 +9,11 @@ const { result, errors } = Parser.command('boilerplate')
 
 .string('input', './template.js')
 .index('input', 0)
-.describe('input', `Add input (default: "${process.cwd()}")`)
+.describe('input', `Add input (default: "./template.js")`)
 
-.string('output', './generated')
+.string('output', './')
 .index('output', 1)
-.describe('output', `Add output (default: "${process.cwd()}")`)
+.describe('output', `Add output (default: "./")`)
 
 // --help, -h
 .help()

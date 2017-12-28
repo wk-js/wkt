@@ -6,6 +6,7 @@ const fs = require("fs");
 const when = require("when");
 const path_1 = require("path");
 const function_1 = require("lol/utils/function");
+const array_1 = require("lol/utils/array");
 const index_2 = require("./resolver/index");
 function parse(boilerplate, content, throwOnError = true) {
     let scope = "var helpers = this;\n";
@@ -66,7 +67,7 @@ class Boilerplate {
         return path_1.dirname(this.path);
     }
     get dst_path() {
-        return this.output;
+        return this.is_root ? this.output : this.root.output;
     }
     get current_bundle() {
         return this.stack.currentTask ? this.stack.currentTask : 'bundle';
@@ -98,11 +99,12 @@ class Boilerplate {
     }
     resolveAPIs(content) {
         const api_imports = imports('api', content, this.path);
+        api_imports.push('exec', 'file', 'macro', 'prompt', 'stack', 'template');
         return when.all(api_imports.map(function (path) {
             return index_1.API.Resolver.resolve(path);
         }))
             .then(() => {
-            this.api = index_1.API.create(this, api_imports);
+            this.api = index_1.API.create(this, array_1.unique(api_imports));
             parse(this, content);
         });
     }

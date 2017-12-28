@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_1 = require("lol/utils/function");
+const object_1 = require("lol/utils/object");
 const child_process_1 = require("child_process");
 const memory_stream_1 = require("../../utils/memory-stream");
 const when = require("when");
@@ -23,14 +24,17 @@ class Subprocess {
         this.reject = NOOP;
         this.status = SubprocessStatuses.PENDING;
         function_1.bind(['execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData'], this);
-        this.options = Object.assign({
+        options = options || {};
+        this.options = {
             interactive: true,
             printStdout: true,
             printStderr: true,
             rejectOnError: false,
-            encoding: 'utf-8',
             async: true
-        }, this.options || {});
+        };
+        const okeys = Object.keys(this.options);
+        Object.assign(this.options, object_1.pick(options, okeys));
+        this.processOptions = object_1.omit(options, okeys);
         if (this.options.async)
             this.prepare();
     }
@@ -53,7 +57,11 @@ class Subprocess {
         if (this.status !== SubprocessStatuses.PENDING)
             return;
         this.status = SubprocessStatuses.PROCESSING;
-        const opts = { env: this.options.env || {}, stdio: 'pipe', encoding: this.options.encoding };
+        const opts = {
+            env: this.options.env || {},
+            stdio: 'pipe',
+            encoding: 'utf-8'
+        };
         opts.env = Object.assign(opts.env, process.env);
         if (this.options.use_color) {
             opts.env.FORCE_COLOR = true;
@@ -61,6 +69,7 @@ class Subprocess {
         if (this.options.interactive) {
             opts.stdio = 'inherit';
         }
+        Object.assign(opts, this.processOptions);
         const cli = this.command.split(' ');
         return child_process_1.spawnSync(cli.shift(), cli, opts);
     }
@@ -76,6 +85,7 @@ class Subprocess {
         if (this.options.interactive) {
             opts.stdio = 'inherit';
         }
+        Object.assign(opts, this.processOptions);
         const cli = this.command.split(' ');
         this.ps = child_process_1.spawn(cli.shift(), cli, opts);
         this.activate();

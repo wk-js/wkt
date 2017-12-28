@@ -1,4 +1,5 @@
 import { bind } from 'lol/utils/function'
+import { pick, omit } from 'lol/utils/object'
 import { spawn, ChildProcess, spawnSync, SpawnSyncReturns } from 'child_process';
 import { MemoryStream } from '../../utils/memory-stream';
 import * as when from 'when'
@@ -31,17 +32,29 @@ export class Subprocess {
 
   status:string = SubprocessStatuses.PENDING
 
+  processOptions:any
+
   constructor(public command:string, public options?:any) {
     bind([ 'execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData' ], this)
 
-    this.options = Object.assign({
+    options = options || {}
+
+    this.options = {
       interactive: true,
       printStdout: true,
       printStderr: true,
       rejectOnError: false,
-      encoding: 'utf-8',
       async: true
-    }, this.options || {})
+    }
+
+    const okeys = Object.keys(this.options)
+
+    Object.assign(
+      this.options,
+      pick( options, okeys )
+    )
+
+    this.processOptions = omit( options, okeys )
 
     if (this.options.async) this.prepare()
   }
@@ -69,7 +82,11 @@ export class Subprocess {
     if (this.status !== SubprocessStatuses.PENDING) return;
     this.status = SubprocessStatuses.PROCESSING
 
-    const opts = { env: this.options.env || {}, stdio: 'pipe', encoding: this.options.encoding }
+    const opts = {
+      env: this.options.env || {},
+      stdio: 'pipe',
+      encoding: 'utf-8'
+    }
     opts.env = Object.assign(opts.env, process.env)
 
     if (this.options.use_color) {
@@ -79,6 +96,8 @@ export class Subprocess {
     if (this.options.interactive) {
       opts.stdio = 'inherit'
     }
+
+    Object.assign(opts, this.processOptions)
 
     const cli = this.command.split(' ')
 
@@ -99,6 +118,8 @@ export class Subprocess {
     if (this.options.interactive) {
       opts.stdio = 'inherit'
     }
+
+    Object.assign(opts, this.processOptions)
 
     const cli = this.command.split(' ')
 

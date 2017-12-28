@@ -44,6 +44,17 @@ export abstract class API {
     return this.stores[this.current_bundle][key]
   }
 
+  shared_store(key:string, value?:any) {
+    this.stores['__shared'] = this.stores['__shared'] || {}
+
+    if (arguments.length === 2) {
+      this.stores['__shared'][key] = value
+      return this.stores['__shared'][key]
+    }
+
+    return this.stores['__shared'][key]
+  }
+
   fromSource(str:string) {
     return join( this.boilerplate.src_path, str )
   }

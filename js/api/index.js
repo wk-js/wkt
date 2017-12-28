@@ -24,6 +24,14 @@ class API {
         }
         return this.stores[this.current_bundle][key];
     }
+    shared_store(key, value) {
+        this.stores['__shared'] = this.stores['__shared'] || {};
+        if (arguments.length === 2) {
+            this.stores['__shared'][key] = value;
+            return this.stores['__shared'][key];
+        }
+        return this.stores['__shared'][key];
+    }
     fromSource(str) {
         return path_1.join(this.boilerplate.src_path, str);
     }

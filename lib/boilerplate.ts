@@ -6,6 +6,7 @@ import * as when from 'when'
 import { setTimeout } from 'timers';
 import { dirname, relative, join, normalize } from 'path';
 import { bind, scope } from 'lol/utils/function';
+import { unique } from 'lol/utils/array'
 import { Resolver } from './resolver/index';
 
 function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = true ) {
@@ -83,7 +84,7 @@ export class Boilerplate {
   }
 
   get dst_path() {
-    return this.output
+    return this.is_root ? this.output : this.root.output
   }
 
   get current_bundle() {
@@ -124,14 +125,15 @@ export class Boilerplate {
   }
 
   resolveAPIs(content:string) {
-    const api_imports = imports( 'api'   , content, this.path )
+    const api_imports = imports( 'api', content, this.path )
+    api_imports.push( 'exec', 'file', 'macro', 'prompt', 'stack', 'template' )
 
     return when.all(api_imports.map(function(path:string) {
       return API.Resolver.resolve(path)
     }))
 
     .then(() => {
-      this.api = API.create( this, api_imports )
+      this.api = API.create( this, unique(api_imports) )
       parse( this, content )
     })
   }

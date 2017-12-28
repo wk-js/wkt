@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../../index");
 const when = require("when");
 function prompt(message, options) {
     return when.promise(function (resolve) {
@@ -24,6 +23,7 @@ function prompt(message, options) {
         process.stdin.on("data", onData);
     });
 }
+exports.prompt = prompt;
 function ask(message, options) {
     options = typeof options === 'object' ? options : {};
     const defaultAnswer = options.hasOwnProperty('defaultAnswer') ? options.defaultAnswer : 'y';
@@ -37,47 +37,4 @@ function ask(message, options) {
         return when(defaultAnswer).then(answer);
     return prompt(message + ` (y|yes|n|no) (Default: ${defaultAnswer})`, { empty: true }).then(answer);
 }
-class PromptAPI extends index_1.API {
-    constructor() {
-        super(...arguments);
-        this.answers = {};
-    }
-    get questions() {
-        return this.store('questions') ? this.store('questions') : this.store('questions', []);
-    }
-    init() {
-        this.boilerplate.stack.before('bundle', 'prompt');
-    }
-    bundle() {
-        const tasks = this.questions.map((question) => {
-            return () => {
-                let promise;
-                if (question.action === 'ask')
-                    promise = ask(question.message, question.options);
-                if (question.action === 'prompt')
-                    promise = prompt(question.message);
-                return promise.then((value) => {
-                    this.answers[question.variable] = value;
-                });
-            };
-        });
-        return when.reduce(tasks, (res, action) => action(), null);
-    }
-    helpers() {
-        return {
-            ask: this.ask,
-            prompt: this.prompt,
-            answer: this.answer
-        };
-    }
-    ask(message, variable, options) {
-        this.questions.push({ message, variable, options, action: 'ask' });
-    }
-    prompt(message, variable) {
-        this.questions.push({ message, variable, action: 'prompt' });
-    }
-    answer(variable) {
-        return this.answers[variable];
-    }
-}
-exports.PromptAPI = PromptAPI;
+exports.ask = ask;
