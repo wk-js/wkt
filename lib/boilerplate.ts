@@ -8,6 +8,11 @@ import { dirname, relative, join, normalize } from 'path';
 import { bind, scope } from 'lol/utils/function';
 import { unique } from 'lol/utils/array'
 import { Resolver } from './resolver/index';
+import { requireContent } from './utils/require-content'
+
+interface Contructable<T> {
+  new() : T
+}
 
 function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = true ) {
   let scope = "var helpers = this;\n"
@@ -21,7 +26,12 @@ function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = 
   scope += "\n" + content
 
   try {
-    Function(scope).call(api)
+    requireContent(
+      scope,
+      process.cwd() + '/' + boilerplate.path,
+      module,
+      api
+    )
   } catch(e) {
     if (throwOnError) throw e
   }

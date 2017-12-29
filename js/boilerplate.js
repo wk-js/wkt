@@ -8,6 +8,7 @@ const path_1 = require("path");
 const function_1 = require("lol/utils/function");
 const array_1 = require("lol/utils/array");
 const index_2 = require("./resolver/index");
+const require_content_1 = require("./utils/require-content");
 function parse(boilerplate, content, throwOnError = true) {
     let scope = "var helpers = this;\n";
     const api = boilerplate.api.helpers;
@@ -16,7 +17,7 @@ function parse(boilerplate, content, throwOnError = true) {
     }
     scope += "\n" + content;
     try {
-        Function(scope).call(api);
+        require_content_1.requireContent(scope, process.cwd() + '/' + boilerplate.path, module, api);
     }
     catch (e) {
         if (throwOnError)
