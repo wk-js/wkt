@@ -6,24 +6,13 @@ class StackAPI extends index_1.API {
     bundle() { }
     helpers() {
         return {
-            add: this.add,
-            before: this.before,
-            after: this.after,
+            stack: this.stack,
             invocator: this.invocator,
             output: this.output
         };
     }
     stack() {
         return this.boilerplate.stack;
-    }
-    add(key, fn) {
-        this.boilerplate.stack.add(key, fn);
-    }
-    before(bfore, key, fn) {
-        this.boilerplate.stack.before(bfore, key, fn);
-    }
-    after(after, key, fn) {
-        this.boilerplate.stack.after(after, key, fn);
     }
     invocator() {
         return this.boilerplate.root.stack;

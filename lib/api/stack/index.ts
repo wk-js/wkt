@@ -10,9 +10,7 @@ export class StackAPI extends API {
 
   helpers() {
     return {
-      add:       this.add,
-      before:    this.before,
-      after:     this.after,
+      stack:     this.stack,
       invocator: this.invocator,
       output:    this.output
     }
@@ -20,18 +18,6 @@ export class StackAPI extends API {
 
   stack() : Configure {
     return this.boilerplate.stack
-  }
-
-  add(key:string | Function, fn?:Function) {
-    this.boilerplate.stack.add(key, fn)
-  }
-
-  before(bfore:string, key:string | Function, fn?:Function) {
-    this.boilerplate.stack.before(bfore, key, fn)
-  }
-
-  after(after:string, key:string | Function, fn?:Function) {
-    this.boilerplate.stack.after(after, key, fn)
   }
 
   invocator() {
