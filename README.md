@@ -244,7 +244,7 @@ source('./assets/template.js') // Or a file
 ```
 
 Example
-```
+```js
 source('../../../boilerplates/skeleton/template.js')
 source('../../../boilerplates/assets/template.js')
 source('../../../boilerplates/bump/template.js')
