@@ -6,7 +6,7 @@ wkt <input=string default="./template.js"> <output=string default="./">
 
 ## Example
 
-See example [here](https://github.com/wk-ts/wkt-web/blob/master/skeleton/template.js)
+See example [here](https://github.com/wk-js/wkt-web/blob/master/skeleton/template.js)
 
 ## API
 
