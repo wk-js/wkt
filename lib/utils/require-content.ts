@@ -1,10 +1,11 @@
-export function requireContent(content:string, path:string, parent:any, xprts:any) {
+const Module = module.constructor as any
 
-  const Module = module.constructor as any
-  const mod = new Module(path, parent)
-  mod.filename = path
-  mod.exports = xprts
-  mod.loaded = true
-  mod._compile( content, path )
+export function requireContent(code:string, filename:string, context?:any) {
+
+  const mod    = new Module(filename, module)
+  mod.filename = filename
+  mod.exports  = context
+  mod.loaded   = true
+  mod._compile( code, filename )
 
 }

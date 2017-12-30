@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function requireContent(content, path, parent, xprts) {
-    const Module = module.constructor;
-    const mod = new Module(path, parent);
-    mod.filename = path;
-    mod.exports = xprts;
+const Module = module.constructor;
+function requireContent(code, filename, context) {
+    const mod = new Module(filename, module);
+    mod.filename = filename;
+    mod.exports = context;
     mod.loaded = true;
-    mod._compile(content, path);
+    mod._compile(code, filename);
 }
 exports.requireContent = requireContent;

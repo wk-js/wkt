@@ -10,14 +10,16 @@ const array_1 = require("lol/utils/array");
 const index_2 = require("./resolver/index");
 const require_content_1 = require("./utils/require-content");
 function parse(boilerplate, content, throwOnError = true) {
-    let scope = "var helpers = this;\n";
+    let code = "var helpers = this;\n";
     const api = boilerplate.api.helpers;
     for (const key in api) {
-        scope += `function ${key}() { return helpers.${key}.apply(null, arguments); }\n`;
+        code += `function ${key}() { return helpers.${key}.apply(null, arguments); }\n`;
     }
-    scope += "\n" + content;
+    code += `function source() {}`;
+    code += `function api() {}`;
+    code += `\n${content}`;
     try {
-        require_content_1.requireContent(scope, process.cwd() + '/' + boilerplate.path, module, api);
+        require_content_1.requireContent(code, process.cwd() + '/' + boilerplate.path, api);
     }
     catch (e) {
         if (throwOnError)
@@ -25,7 +27,7 @@ function parse(boilerplate, content, throwOnError = true) {
     }
 }
 function imports(key, content, path) {
-    const line_regex = new RegExp(`//${key}((.+))`, 'gm');
+    const line_regex = new RegExp(`${key}((.+))`, 'gm');
     const str_regex = /\(.+\)/g;
     const lines = content.match(line_regex) || [];
     const imports = lines.map(line => {

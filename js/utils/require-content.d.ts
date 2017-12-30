@@ -1,1 +1,1 @@
-export declare function requireContent(content: string, path: string, parent: any, xprts: any): void;
+export declare function requireContent(code: string, filename: string, context?: any): void;
