@@ -6,11 +6,13 @@ wkt <input=string default="./template.js"> <output=string default="./">
 
 ## Example
 
-See example [here](https://github.com/wk-js/wkt-web/blob/master/skeleton/template.js)
+See examples [here](https://github.com/wk-js/wkt-web)
 
 ## API
 
 ### `file`
+
+By default, every files and directory relative to `template.js` are copied to the destination directory.
 
 ```ts
 /*
