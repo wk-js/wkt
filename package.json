@@ -2,6 +2,7 @@
   "name": "wkt",
   "version": "0.0.1",
   "description": "",
+  "bin": "bin/wkt",
   "main": "js/index.js",
   "types": "js/index.d.ts",
   "directories": {

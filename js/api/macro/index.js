@@ -5,26 +5,32 @@ class MacroAPI extends index_1.API {
     get macros() {
         return this.store('macros') ? this.store('macros') : this.store('macros', {});
     }
-    init() { }
+    init() {
+        this.setMacro = this.setMacro.bind(this);
+        this.getMacro = this.getMacro.bind(this);
+    }
     bundle() { }
     helpers() {
         return {
             macro: this.macro
         };
     }
-    createMacro(key, macro) {
+    setMacro(key, macro) {
         this.macros[key] = macro;
     }
+    getMacro(key, ...args) {
+        return this.macros[key];
+    }
     macro(key, ...args) {
-        if (!this.macros.hasOwnProperty(key)) {
+        if (!key) {
             return {
-                create: (macro) => {
-                    this.createMacro(key, macro);
-                }
+                get: this.getMacro,
+                set: this.setMacro
             };
         }
-        if (typeof this.macros[key] === 'function') {
-            return this.macros[key].apply(this.macros[key], args);
+        const macro = this.getMacro(key);
+        if (typeof macro === 'function') {
+            return macro.apply(macro, args);
         }
     }
 }

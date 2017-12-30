@@ -4,8 +4,9 @@ export declare class MacroAPI extends API {
     init(): void;
     bundle(): void;
     helpers(): {
-        macro: (key: string, ...args: any[]) => any;
+        macro: (key?: string | undefined, ...args: any[]) => any;
     };
-    createMacro(key: string, macro: Function): void;
-    macro(key: string, ...args: any[]): any;
+    setMacro(key: string, macro: Function): void;
+    getMacro(key: string, ...args: any[]): any;
+    macro(key?: string, ...args: any[]): any;
 }

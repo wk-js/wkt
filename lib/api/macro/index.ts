@@ -7,7 +7,10 @@ export class MacroAPI extends API {
     return this.store('macros') ? this.store('macros') : this.store('macros', {})
   }
 
-  init() {}
+  init() {
+    this.setMacro = this.setMacro.bind(this)
+    this.getMacro = this.getMacro.bind(this)
+  }
 
   bundle() {}
 
@@ -17,21 +20,25 @@ export class MacroAPI extends API {
     }
   }
 
-  createMacro(key:string, macro:Function) {
+  setMacro(key:string, macro:Function) {
     this.macros[key] = macro
   }
 
-  macro(key:string, ...args:any[]) {
-    if (!this.macros.hasOwnProperty(key)) {
+  getMacro(key:string, ...args:any[]) {
+    return this.macros[key]
+  }
+
+  macro(key?:string, ...args:any[]) {
+    if (!key) {
       return {
-        create: (macro:Function) => {
-          this.createMacro(key, macro)
-        }
+        get: this.getMacro,
+        set: this.setMacro
       }
     }
 
-    if (typeof this.macros[key] === 'function') {
-      return this.macros[key].apply(this.macros[key], args)
+    const macro = this.getMacro(key)
+    if (typeof macro === 'function') {
+      return macro.apply(macro, args)
     }
   }
 
