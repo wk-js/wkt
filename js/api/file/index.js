@@ -22,7 +22,8 @@ class FileAPI extends index_1.API {
             remove: this.remove,
             rename: this.rename,
             move: this.move,
-            ignore: this.ignore
+            ignore: this.ignore,
+            edit: this.edit
         };
     }
     file(file, parameters) {
@@ -53,6 +54,9 @@ class FileAPI extends index_1.API {
     ignore(file) {
         this.remove(file);
     }
+    edit(file, callback) {
+        this.globs.push({ file: file, action: 'edit', context: 'destination', callback: callback });
+    }
     bundle_copy() {
         const globs = this.globs.filter(glob => glob.context === 'source')
             .map(glob => this.fromSource(glob.file));
@@ -78,6 +82,9 @@ class FileAPI extends index_1.API {
                     }
                     else if (glob.action === 'remove') {
                         return utils_1.remove(file);
+                    }
+                    else if (glob.action === 'edit' && typeof glob.callback === 'function') {
+                        return utils_1.editFile(file, glob.callback);
                     }
                 };
             });

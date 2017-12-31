@@ -4,6 +4,7 @@ export interface FileAPIItem {
     action: string;
     context: string;
     output?: string;
+    callback?: Function;
 }
 export declare class FileAPI extends API {
     readonly globs: FileAPIItem[];
@@ -16,6 +17,7 @@ export declare class FileAPI extends API {
         rename: (file: string, output: string) => void;
         move: (file: string, output: string) => void;
         ignore: (file: string) => void;
+        edit: (file: string, callback: Function) => void;
     };
     file(file: string, parameters: FileAPIItem): void;
     copy(file: string, output?: string): void;
@@ -23,6 +25,7 @@ export declare class FileAPI extends API {
     move(file: string, output: string): void;
     rename(file: string, output: string): void;
     ignore(file: string): void;
+    edit(file: string, callback: Function): void;
     bundle_copy(): any;
     bundle_apply(): any[];
 }

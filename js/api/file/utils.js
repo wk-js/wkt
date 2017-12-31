@@ -141,3 +141,9 @@ function readFile(file) {
     });
 }
 exports.readFile = readFile;
+function editFile(file, callback) {
+    return readFile(file).then(callback).then(function (content) {
+        return writeFile(content, file);
+    });
+}
+exports.editFile = editFile;

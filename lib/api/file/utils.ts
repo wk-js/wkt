@@ -132,7 +132,7 @@ export function fetch(include:string|string[], exclude?:string|string[]) {
   return files
 }
 
-export function writeFile(content:string, file:string) {
+export function writeFile(content:string | Buffer, file:string) {
   ensureDir(dirname(file))
 
   return promise(function(resolve:Function, reject:Function) {
@@ -159,5 +159,11 @@ export function readFile(file:string) {
 
       resolve(data)
     })
+  })
+}
+
+export function editFile(file:string, callback:Function) {
+  return readFile(file).then(callback).then(function(content:string | Buffer) {
+    return writeFile(content, file)
   })
 }

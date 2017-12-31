@@ -38,6 +38,11 @@ move(file: string, output: string);
 ```
 
 ```ts
+// Edit a file. Callback can return a string or a promise
+edit(file: string, callback: Function);
+```
+
+```ts
 // Alias for remove()
 ignore(file: string);
 ```

@@ -1,4 +1,4 @@
-import { fetch, ensureDir, copy, remove, move } from "./utils";
+import { fetch, ensureDir, copy, remove, move, editFile } from "./utils";
 import { join } from "path";
 import { all, reduce, promise } from "when";
 import { bind } from "lol/utils/function";
@@ -10,7 +10,8 @@ export interface FileAPIItem {
   file:string,
   action:string,
   context:string,
-  output?:string
+  output?:string,
+  callback?:Function
 }
 
 export class FileAPI extends API {
@@ -35,7 +36,8 @@ export class FileAPI extends API {
       remove: this.remove,
       rename: this.rename,
       move:   this.move,
-      ignore: this.ignore
+      ignore: this.ignore,
+      edit:   this.edit
     }
   }
 
@@ -75,6 +77,10 @@ export class FileAPI extends API {
     this.remove( file )
   }
 
+  edit(file:string, callback:Function) {
+    this.globs.push({ file: file, action: 'edit', context: 'destination', callback: callback })
+  }
+
   bundle_copy() {
     const globs = this.globs.filter(glob => glob.context === 'source')
                             .map(glob => this.fromSource(glob.file))
@@ -101,6 +107,8 @@ export class FileAPI extends API {
               return move( file, this.fromDestination(glob.output) )
             } else if (glob.action === 'remove') {
               return remove( file )
+            } else if (glob.action === 'edit' && typeof glob.callback === 'function') {
+              return editFile( file, glob.callback )
             }
           }
         })
