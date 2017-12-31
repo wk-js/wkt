@@ -67,6 +67,16 @@ Example
 ```js
 copy('**/*')
 remove('template.js')
+
+edit('package.json', function(content) {
+  const json = JSON.parse(content.toString('utf-8'))
+
+  Object.assign(json.dependencies, {
+    "asset-pipeline": "github:wk-js/asset-pipeline#0.0.3"
+  })
+
+  return JSON.stringify(json, null, 2)
+})
 ```
 
 ### `macro`
