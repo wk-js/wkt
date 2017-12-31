@@ -48,13 +48,20 @@ file(file: string, parameters: FileAPIItem);
 
 Parameters
 
-```
+```js
 {
   file: "my_filename",
   action: "copy" || "move" || "remove",
   context: "source" || "destination",
   output: "my_output"
 }
+```
+
+Example
+
+```js
+copy('**/*')
+remove('template.js')
 ```
 
 ### `macro`
@@ -94,7 +101,7 @@ Same options as `spawn()`
 
 Plus some shortcuts
 
-```
+```js
 {
   interactive: true,    // Set stdio to inherit
   printStdout: true,    // Print stdout
@@ -103,6 +110,10 @@ Plus some shortcuts
 }
 ```
 
+Example
+```js
+execSync('pwd')
+```
 
 ### `stack`
 
@@ -241,7 +252,7 @@ Load another boilerplate
 Example
 
 ```js
-source('wk-js/wkt-web#skeleton') // A repository or repository with a branch/tag
+source('github:wk-js/wkt-web#skeleton') // A repository or repository with a branch/tag
 source('./assets/template.js') // Or a file
 ```
 
@@ -266,6 +277,6 @@ Import custom api function
 Example
 
 ```js
-api('wk-js/wkt-api') // A repository or repository with a branch/tag
+api('github:wk-js/wkt-api') // A repository or repository with a branch/tag
 api('./my_custom_api.js') // Or a file
 ```
