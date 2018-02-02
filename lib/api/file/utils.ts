@@ -33,8 +33,11 @@ export function isDirectory(path:string) {
 export function copy(fromFile:string, toFile:string) {
   return promise(function(resolve:Function, reject:Function) {
 
-    const fileValid = isFile(fromFile)
-    if (!fileValid) throw 'Files not valid'
+    let fileValid = fromFile !== toFile
+    if (!fileValid) throw `Cannot copy '${fromFile}' to the same path`
+
+    fileValid = isFile(fromFile)
+    if (!fileValid) throw `'${fromFile}' is not a file`
 
     ensureDir(dirname( toFile )).then(function() {
       const rs = fs.createReadStream( fromFile )

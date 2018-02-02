@@ -31,9 +31,12 @@ function isDirectory(path) {
 exports.isDirectory = isDirectory;
 function copy(fromFile, toFile) {
     return when_1.promise(function (resolve, reject) {
-        const fileValid = isFile(fromFile);
+        let fileValid = fromFile !== toFile;
         if (!fileValid)
-            throw 'Files not valid';
+            throw `Cannot copy '${fromFile}' to the same path`;
+        fileValid = isFile(fromFile);
+        if (!fileValid)
+            throw `'${fromFile}' is not a file`;
         ensureDir(path_1.dirname(toFile)).then(function () {
             const rs = fs.createReadStream(fromFile);
             const ws = fs.createWriteStream(toFile);

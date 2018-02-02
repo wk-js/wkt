@@ -88,11 +88,11 @@ export class Boilerplate {
   }
 
   get src_path() {
-    return dirname( this.path )
+    return normalize(dirname( this.path ))
   }
 
   get dst_path() {
-    return this.is_root ? this.output : this.root.output
+    return normalize(this.is_root ? this.output : this.root.output)
   }
 
   get current_bundle() {
