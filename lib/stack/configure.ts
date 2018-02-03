@@ -91,8 +91,8 @@ export class Configure extends Order {
       return () => {
         const fns = [ this.tasks[key] ]
 
-        if (hooks.beforeTask) fns.unshift( hooks.beforeTask )
-        if (hooks.afterTask)  fns.push   ( hooks.afterTask )
+        if (hooks && hooks.beforeTask) fns.unshift( hooks.beforeTask )
+        if (hooks && hooks.afterTask)  fns.push   ( hooks.afterTask )
 
         return reduce(fns, (res:null, action:Function) => action(), null)
       }
