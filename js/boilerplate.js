@@ -67,10 +67,10 @@ class Boilerplate {
         this.stack.add('bundle');
     }
     get src_path() {
-        return path_1.dirname(this.path);
+        return path_1.normalize(path_1.dirname(this.path));
     }
     get dst_path() {
-        return this.is_root ? this.output : this.root.output;
+        return path_1.normalize(this.is_root ? this.output : this.root.output);
     }
     get current_bundle() {
         return this.stack.currentTask ? this.stack.currentTask : 'bundle';
