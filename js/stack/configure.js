@@ -72,9 +72,9 @@ class Configure extends order_1.Order {
         const tasks = this.order.map((key) => {
             return () => {
                 const fns = [this.tasks[key]];
-                if (hooks.beforeTask)
+                if (hooks && hooks.beforeTask)
                     fns.unshift(hooks.beforeTask);
-                if (hooks.afterTask)
+                if (hooks && hooks.afterTask)
                     fns.push(hooks.afterTask);
                 return when_1.reduce(fns, (res, action) => action(), null);
             };

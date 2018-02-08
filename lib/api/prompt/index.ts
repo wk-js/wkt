@@ -1,51 +1,58 @@
 import { API } from "../index";
 import * as when from 'when';
-import { ask, prompt } from './utils'
+import { ask, prompt, choices } from './utils'
 
 export class PromptAPI extends API {
 
   answers:any = {}
 
-  get questions() : any[] {
-    return this.store('questions') ? this.store('questions') : this.store('questions', [])
+  get questions() : { [key:string]: any } {
+    return this.store('questions') ? this.store('questions') : this.store('questions', {})
   }
 
-  init() {
-    this.boilerplate.stack.before('bundle', 'prompt')
-  }
+  init() {}
 
-  bundle() {
-    const tasks = this.questions.map((question:any) => {
-      return () => {
-        let promise
-
-        if (question.action === 'ask')    promise = ask( question.message, question.options )
-        if (question.action === 'prompt') promise = prompt( question.message, question.options )
-
-        return promise.then((value:any) => {
-          this.answers[ question.variable ] = value
-        })
-      }
-    })
-
-    return when.reduce(tasks, (res:null, action:Function) => action(), null)
-  }
+  bundle() {}
 
   helpers() {
     return {
       ask: this.ask,
       prompt: this.prompt,
-      answer: this.answer
+      answer: this.answer,
+      choices: this.choices
     }
   }
 
   ask( message:string, variable:string, options?:any ) {
-    this.questions.push({ message, variable, options, action: 'ask' })
+    variable = variable || message
+    this.questions[ variable ] = ask( message )
+    this.questions[ variable ].then((answer:boolean) => this.answers[ variable as string ] = answer)
+    return this.questions[ variable ]
   }
 
   prompt( message:string, variable:string, options?:any ) {
-    this.questions.push({ message, variable, options, action: 'prompt' })
+    variable = variable || message
+    this.questions[ variable ] = prompt( message )
+    this.questions[ variable ].then((answer:string) => this.answers[ variable as string ] = answer)
+    return this.questions[ variable ]
   }
+
+  choices( message:string, variable:string, list:string[], options?:any ) {
+    variable = variable || message
+    this.questions[ variable ] = choices( message, list, options )
+    this.questions[ variable ].then((answer:string) => this.answers[ variable as string ] = answer)
+    return this.questions[ variable ]
+  }
+
+  // chain( message:string, variable:string, list:{ [key:string]:any }, options?:any ) {
+  //   const keys = Object.keys( list )
+  //   return this.choices(message, variable, keys).then((answer:string) => {
+  //     if (list.hasOwnProperty(answer)) {
+  //       const method = list[answer].method as Function
+  //       return method.apply(this, list[answer].parameters)
+  //     }
+  //   })
+  // }
 
   answer( variable:string ) {
     return this.answers[ variable ]

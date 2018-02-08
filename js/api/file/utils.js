@@ -117,6 +117,18 @@ function fetch(include, exclude) {
     return files;
 }
 exports.fetch = fetch;
+function fetchDirs(include, exclude) {
+    const FL = new filelist_1.FileList;
+    const includes = Array.isArray(include) ? include : [include];
+    const excludes = Array.isArray(exclude) ? exclude : exclude ? [exclude] : [];
+    includes.forEach((inc) => FL.include(inc));
+    excludes.forEach((exc) => FL.exclude(exc));
+    const files = FL.toArray().filter(function (file) {
+        return isDirectory(file);
+    });
+    return files;
+}
+exports.fetchDirs = fetchDirs;
 function writeFile(content, file) {
     ensureDir(path_1.dirname(file));
     return when_1.promise(function (resolve, reject) {

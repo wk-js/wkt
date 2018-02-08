@@ -12,12 +12,12 @@ export declare class FileAPI extends API {
     bundle(): any;
     helpers(): {
         file: (file: string, parameters: FileAPIItem) => void;
-        copy: (file: string, output?: string | undefined) => void;
-        remove: (file: string) => void;
-        rename: (file: string, output: string) => void;
-        move: (file: string, output: string) => void;
-        ignore: (file: string) => void;
-        edit: (file: string, callback: Function) => void;
+        copyFile: (file: string, output?: string | undefined) => void;
+        removeFile: (file: string) => void;
+        renameFile: (file: string, output: string) => void;
+        moveFile: (file: string, output: string) => void;
+        ignoreFile: (file: string) => void;
+        editFile: (file: string, callback: Function) => void;
     };
     file(file: string, parameters: FileAPIItem): void;
     copy(file: string, output?: string): void;

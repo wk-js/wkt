@@ -10,7 +10,6 @@ class FileAPI extends index_1.API {
     }
     init() {
         function_1.bind(['bundle_copy', 'bundle_apply'], this);
-        this.copy('**/*');
     }
     bundle() {
         return this.bundle_copy().then(this.bundle_apply);
@@ -18,12 +17,12 @@ class FileAPI extends index_1.API {
     helpers() {
         return {
             file: this.file,
-            copy: this.copy,
-            remove: this.remove,
-            rename: this.rename,
-            move: this.move,
-            ignore: this.ignore,
-            edit: this.edit
+            copyFile: this.copy,
+            removeFile: this.remove,
+            renameFile: this.rename,
+            moveFile: this.move,
+            ignoreFile: this.ignore,
+            editFile: this.edit
         };
     }
     file(file, parameters) {

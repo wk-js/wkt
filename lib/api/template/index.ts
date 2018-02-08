@@ -38,7 +38,7 @@ export class TemplateSingleton extends API {
 
   init() {
     this.afterRootBundle = this.afterRootBundle.bind(this)
-    this.boilerplate.root.stack.after('bundle', this.afterRootBundle)
+    this.boilerplate.root.stack.after('bundle', 'template', this.afterRootBundle)
   }
 
   bundle() {}

@@ -22,7 +22,6 @@ export class FileAPI extends API {
 
   init() {
     bind(['bundle_copy', 'bundle_apply'], this)
-    this.copy( '**/*' )
   }
 
   bundle() {
@@ -31,13 +30,13 @@ export class FileAPI extends API {
 
   helpers() {
     return {
-      file:   this.file,
-      copy:   this.copy,
-      remove: this.remove,
-      rename: this.rename,
-      move:   this.move,
-      ignore: this.ignore,
-      edit:   this.edit
+      file:       this.file,
+      copyFile:   this.copy,
+      removeFile: this.remove,
+      renameFile: this.rename,
+      moveFile:   this.move,
+      ignoreFile: this.ignore,
+      editFile:   this.edit
     }
   }
 

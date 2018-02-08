@@ -30,7 +30,11 @@ function imports(key, content, path) {
     const line_regex = new RegExp(`${key}((.+))`, 'gm');
     const str_regex = /\(.+\)/g;
     const lines = content.match(line_regex) || [];
-    const imports = lines.map(line => {
+    const imports = lines
+        .filter((line) => {
+        return Array.isArray(line.match(str_regex));
+    })
+        .map(line => {
         let result = line.match(str_regex)[0];
         result = result.trim().replace(/"|'|`|\(|\)/g, '').trim();
         let pth = path_1.join(path_1.dirname(path), result);
