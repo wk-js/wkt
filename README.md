@@ -10,73 +10,170 @@ See examples [here](https://github.com/wk-js/wkt-web)
 
 ## API
 
+### `boilerplate`
+
+```ts
+// Access to the boilerplate stack
+LocalStack() => Configure;
+LocalStack().add(key:string, callback?:Function)
+LocalStack().before(before:string, key?:string, callback?:Function)
+LocalStack().after(after:string, key?:string, callback?:Function)
+LocalStack().first(key:string, callback?:Function)
+LocalStack().last(key:string, callback?:Function)
+```
+
+```ts
+// Access to the root boilerplate stack
+RootStack() => Configure;
+RootStack().add(key:string, callback?:Function)
+RootStack().before(before:string, key?:string, callback?:Function)
+RootStack().after(after:string, key?:string, callback?:Function)
+RootStack().first(key:string, callback?:Function)
+RootStack().last(key:string, callback?:Function)
+```
+
+```ts
+// APIs methods from local boilerplate
+// By defaults every methods of the local template are global.
+LocalAPI() => { [key:string]: Function };
+```
+
+```ts
+// APIs methods from root boilerplate
+RootAPI() => { [key:string]: Function };
+```
+
+```ts
+// Get or set the root boilerplate destination path
+output(str?: string | undefined) => string;
+```
+
+Example
+```js
+LocalStack().add('hello', function() {
+  console.log('Hello World')
+})
+
+LocalStack().after('bundle', function() {
+  console.log('after bundle')
+})
+
+LocalStack().before('bundle', function() {
+  console.log('before bundle')
+})
+
+RootStack().before('bundle', function() {
+  console.log('before invocator bundle')
+})
+
+RootStack().after('bundle', function() {
+  console.log('after invocator bundle')
+})
+
+// => before invocator bundle
+// => before bundle
+// => after bundle
+// => Hello World
+// => after invocator bundle
+```
+
 ### `file`
 
 By default, every files and directory relative to `template.js` are copied to the destination directory.
 
 ```ts
-/*
- * Copy a file from source directory to destination directory
- * If an output is defined, the copy is made from destination to destination directory
- */
-copy(file: string, output?: string);
+// Add a file/glob pattern to the destination tree
+addFile(glob:string, parameters?:AssetItemRules);
 ```
 
 ```ts
-// Remove a file in destination directory
-remove(file: string);
+// Ignore a file/glob pattern to the destination tree
+ignoreFile(glob: string);
 ```
 
 ```ts
-// Rename a file in destination directory
-rename(file: string, output: string);
+// Add a directory/glob pattern to the destination tree
+addDirectory(glob:string, parameters?:AssetItemRules);
 ```
 
 ```ts
-// Move a file in destination directory
-move(file: string, output: string);
+// Ignore a directory/glob pattern to the destination tree
+ignoreDirectory(glob: string);
 ```
 
 ```ts
-// Edit a file. Callback can return a string or a promise
-edit(file: string, callback: Function);
-```
-
-```ts
-// Alias for remove()
-ignore(file: string);
-```
-
-```ts
-file(file: string, parameters: FileAPIItem);
-```
-
-Parameters
-
-```js
-{
-  file: "my_filename",
-  action: "copy" || "move" || "remove",
-  context: "source" || "destination",
-  output: "my_output"
-}
+// Edit a file. Callback can return a string/buffer or a promise
+editFile(glob: string, callback: (value: Buffer) => string|Buffer);
 ```
 
 Example
 
 ```js
-copy('**/*')
-remove('template.js')
+addFile('**/*')
+ignore('template.js')
 
-edit('package.json', function(content) {
+editFile('package.json', function(content) {
   const json = JSON.parse(content.toString('utf-8'))
 
   Object.assign(json.dependencies, {
-    "asset-pipeline": "github:wk-js/asset-pipeline#0.0.3"
+    "asset-pipeline": "github:wk-js/asset-pipeline#1.0.0"
   })
 
   return JSON.stringify(json, null, 2)
 })
+```
+
+#### Templating
+
+```ts
+// Add file/glob pattern as a template
+templateFile(glob: string, template?: object | boolean);
+```
+
+```ts
+// Pass data to the templae renderer
+templateData(data:object, options?: TemplateOptions);
+```
+
+```ts
+/**
+ * Works like Configure.
+ *
+ * See https://github.com/wk-js/wkt/blob/master/lib/api/template/chunk_stack.ts
+ */
+chunk().add(key: string, chunk: string) => void;
+chunk().before(bfore: string, key?: string, chunk?: string) => void;
+chunk().after(after: string, key?: string, chunk?: string) => void;
+chunk().first(key: string, chunk: string) => void;
+chunk().last(key: string, chunk: string) => void;
+```
+
+**Example :** Chunk are useful to group data togethers
+
+```ts
+chunk().add('hello:buddy:john', 'Hello John')
+chunk().add('hello:buddy:marc', 'Hello Marc')
+chunk().before('hello:buddy:john', 'hello:world', 'Hello World')
+
+console.log( chunk().get('hello:buddy') )
+// =>
+// Hello John
+// Hello Marc
+
+console.log( chunk().get('hello') )
+// =>
+// Hello World
+// Hello John
+// Hello Marc
+
+console.log( chunk().order )
+// => [ 'hello:world', 'hello:buddy:john', 'hello:buddy:marc' ]
+```
+
+**Example :** Template file
+
+```txt
+{%= chunk('hello:buddy') %}
 ```
 
 ### `macro`
@@ -105,16 +202,16 @@ macro('hello', 'John') // => Hello John
 ### `exec`
 
 ```ts
+// Execute a command asynchronously. Return a promise
 exec(command: string, options?:any);
 ```
 
 ```ts
+// Execute a command synchronously. Return process result
 execSync(command: string, options?:any);
 ```
 
-Same options as `spawn()`
-
-Plus some shortcuts
+Same options as `spawn()`, plus some shortcuts
 
 ```js
 {
@@ -130,133 +227,39 @@ Example
 execSync('pwd')
 ```
 
-### `stack`
-
-```ts
-// Access to the boilerplate stack
-stack() => Configure;
-```
-
-```ts
-// Access to the root boilerplate stack
-invocator() => Configure;
-```
-
-```ts
-// Get or set the root boilerplate destination path
-output(str?: string | undefined) => string;
-```
-
-Example
-```js
-stack().add('hello', function() {
-  console.log('Hello World')
-})
-
-stack().after('bundle', function() {
-  console.log('after bundle')
-})
-
-stack().before('bundle', function() {
-  console.log('before bundle')
-})
-
-invocator().before('bundle', function() {
-  console.log('before invocator bundle')
-})
-
-invocator().after('bundle', function() {
-  console.log('after invocator bundle')
-})
-
-// => before bundle
-// => bundle
-// => after bundle
-// => Hello World
-// => before invocator bundle
-// => invocator bundle
-// => after invocator bundle
-```
-
 More precision [here](https://github.com/wk-js/wkt/blob/master/lib/stack)
 
 ### `prompt`
 
 ```ts
 // Ask a question. Answer yes or no.
-ask(message: string, variable: string, options?: any) => void;
+ask(message: string, variable: string, options?: any) => Promise<boolean>;
 ```
 
 ```ts
 // Ask a question. Answer anything.
-prompt(message: string, variable: string, options?: any) => void;
+prompt(message: string, variable: string, options?: any) => Promise<string>;
+```
+
+```ts
+// Ask a question. Answer limited to a list of answsers.
+choices(message: string, variable: string, list:string[], options?: any) => Promise<string>;
 ```
 
 ```ts
 // Get the answer
-answer(variable: string) => any;
+answer(variable: string) => string | boolean;
 ```
 
 Example
 
 ```js
-stack().before('prompt', function() {
-  prompt('Project name:', 'project_name')
+LocalStack().before('bundle', 'prompt', function() {
+  return prompt('Project name:', 'project_name')
 })
 
-stack().after('prompt', function() {
+LocalStack().after('bundle', 'prompt', function() {
   output(output() + '/' + answer('project_name'))
-})
-```
-
-### template
-
-```ts
-// Add a file to be rendered. You can change the interpolate/evaluate/escape regex in options
-template(file: string, options?: any) => void;
-```
-
-```ts
-// Set data to pass to the template renderer
-templateData(data: any) => void;
-```
-
-```ts
-// Works like Configure but for chunk. See https://github.com/wk-js/wkt/blob/master/lib/api/template/chunk_stack.ts
-chunkAdd(key: string, chunk: string) => void;
-```
-
-```ts
-// Works like Configure but for chunk. See https://github.com/wk-js/wkt/blob/master/lib/api/template/chunk_stack.ts
-chunkBefore(bfore: string, key: string, chunk: string) => void;
-```
-
-```ts
-// Works like Configure but for chunk. See https://github.com/wk-js/wkt/blob/master/lib/api/template/chunk_stack.ts
-chunkAfter(after: string, key: string, chunk: string) => void;
-```
-
-Example
-
-```js
-template('config/application.js')
-template('Wkfile')
-template('README.md')
-
-stack().before('prompt', function() {
-  prompt('Project name:', 'project_name')
-})
-
-stack().after('prompt', function() {
-  output(output() + '/' + answer('project_name'))
-})
-
-stack().after('bundle', function() {
-  templateData({
-    project_name: answer('project_name')
-  })
-
-  chunkAdd('application:module:git', "this.module( require('../workflow/modules/git.js') )")
 })
 ```
 
@@ -267,19 +270,19 @@ Load another boilerplate
 Example
 
 ```js
-source('github:wk-js/wkt-web#skeleton') // A repository or repository with a branch/tag
-source('./assets/template.js') // Or a file
+//@source=github:wk-js/wkt-web#skeleton // A repository or repository with a branch/tag
+//@source=./assets/template.js // Or a file
 ```
 
 Example
 ```js
-source('../../../boilerplates/skeleton/template.js')
-source('../../../boilerplates/assets/template.js')
-source('../../../boilerplates/bump/template.js')
-source('../../../boilerplates/git/template.js')
-source('../../../boilerplates/webpack/template.js')
+//@source=../../../boilerplates/skeleton/template.js
+//@source=../../../boilerplates/assets/template.js
+//@source=../../../boilerplates/bump/template.js
+//@source=../../../boilerplates/git/template.js
+//@source=../../../boilerplates/webpack/template.js
 
-stack().after('bundle', function() {
+LocalStack().after('bundle', function() {
   execSync('npm install')
   remove('template.js')
 })
@@ -292,6 +295,6 @@ Import custom api function
 Example
 
 ```js
-api('github:wk-js/wkt-api') // A repository or repository with a branch/tag
-api('./my_custom_api.js') // Or a file
+//@api=github:wk-js/wkt-api // A repository or repository with a branch/tag
+//@api=./my_custom_api.js // Or a file
 ```
