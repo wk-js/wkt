@@ -16,6 +16,8 @@ const function_1 = require("lol/utils/function");
 const array_1 = require("lol/utils/array");
 const index_1 = require("./resolver/index");
 const require_content_1 = require("./utils/require-content");
+const print_1 = require("wk-print/js/print");
+const tag_1 = require("wk-print/js/extensions/tag");
 function parse(boilerplate, content, throwOnError = true) {
     let code = "var helpers = this;\n";
     const api = boilerplate.api.helpers;
@@ -71,8 +73,18 @@ class Boilerplate {
         this.path = '';
         this.parent = null;
         this.children = [];
+        this.print = new print_1.Print;
         function_1.bind(this, 'parse', 'execute', 'bundle');
         this.stack.add('bundle', this.bundle);
+        this.print.config.category({
+            name: 'debug',
+            visible: true,
+            extensions: {
+                style: { styles: ['grey'] },
+                tag: { tag: 'wkt', styles: ['cyan'] }
+            }
+        });
+        this.print.config.extension(tag_1.TagExtension);
     }
     get src_path() {
         return path_1.normalize(path_1.dirname(this.path));
@@ -153,14 +165,14 @@ class Boilerplate {
         });
         return this.stack.execute({
             beforeTask: () => {
-                let print = `[wkt] Execute "${this.stack.currentTask}" from "${this.input}"`;
+                let print = `Execute ${this.print.green(this.stack.currentTask)} from ${this.print.magenta(this.input)}`;
                 if (this.is_root)
-                    print += ' (root)';
-                console.log(print);
+                    print += this.print.yellow(' (root)');
+                this.print.debug(print);
             }
         })
             .then(() => {
-            console.log(`[wkt] Bundle "${this.input}" done!`);
+            this.print.debug(`Bundle ${this.print.magenta(this.input)} done!`);
             return true;
         });
     }

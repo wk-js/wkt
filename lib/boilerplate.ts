@@ -8,7 +8,10 @@ import { dirname, relative, join, normalize } from 'path';
 import { bind, scope } from 'lol/utils/function';
 import { unique } from 'lol/utils/array'
 import { Resolver } from './resolver/index';
-import { requireContent } from './utils/require-content'
+import { requireContent } from './utils/require-content';
+import { Print } from 'wk-print/js/print';
+import { TagExtension } from 'wk-print/js/extensions/tag';
+import { DebugCategory } from 'wk-print/js/categories/debug';
 
 interface Contructable<T> {
   new() : T
@@ -85,9 +88,21 @@ export class Boilerplate {
   parent:Boilerplate | null = null
   children: Boilerplate[] = []
 
+  print: any = new Print
+
   constructor(public input:string, public output:string) {
     bind(this, 'parse', 'execute', 'bundle')
     this.stack.add( 'bundle', this.bundle )
+
+    this.print.config.category({
+      name: 'debug',
+      visible: true,
+      extensions: {
+        style: { styles: ['grey'] },
+        tag: { tag: 'wkt', styles: ['cyan'] }
+      }
+    })
+    this.print.config.extension(TagExtension)
   }
 
   get src_path() {
@@ -192,14 +207,14 @@ export class Boilerplate {
 
     return this.stack.execute({
       beforeTask: () => {
-        let print = `[wkt] Execute "${this.stack.currentTask}" from "${this.input}"`
-        if (this.is_root) print += ' (root)'
-        console.log( print )
+        let print = `Execute ${this.print.green(this.stack.currentTask as string)} from ${this.print.magenta(this.input)}`
+        if (this.is_root) print += this.print.yellow(' (root)')
+        this.print.debug( print )
       }
     })
 
     .then(() => {
-      console.log(`[wkt] Bundle "${this.input}" done!`)
+      this.print.debug(`Bundle ${this.print.magenta(this.input)} done!`)
       return true
     })
   }

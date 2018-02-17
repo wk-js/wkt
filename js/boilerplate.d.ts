@@ -17,6 +17,7 @@ export declare class Boilerplate {
     api: any;
     parent: Boilerplate | null;
     children: Boilerplate[];
+    print: any;
     constructor(input: string, output: string);
     readonly src_path: string;
     readonly dst_path: string;
