@@ -13,10 +13,6 @@ import { Print } from 'wk-print/js/print';
 import { TagExtension } from 'wk-print/js/extensions/tag';
 import { DebugCategory } from 'wk-print/js/categories/debug';
 
-interface Contructable<T> {
-  new() : T
-}
-
 function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = true ) {
   let code = "var helpers = this;\n"
 
@@ -25,9 +21,6 @@ function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = 
   for (const key in api) {
     code += `function ${key}() { return helpers.${key}.apply(null, arguments); }\n`
   }
-
-  code += `function source() {}`
-  code += `function api() {}`
 
   code += `\n${content}`
 
@@ -39,21 +32,22 @@ function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = 
 }
 
 function imports(key:string, content:string, path:string) {
-  const line_regex = new RegExp(`${key}((.+))`, 'gm')
-  const str_regex  = /\(.+\)/g
+  const line_regex = new RegExp(`\/\/@${key}=.+`, 'g')
+  const str_regex  = new RegExp(`\/\/@${key}=`, 'g')
 
   const lines   = content.match( line_regex ) || []
   const imports = lines
 
+  .map((line) => {
+    return line.replace(str_regex, '').trim()
+  })
+
   .filter((line) => {
-    return Array.isArray(line.match(str_regex) as string[])
+    return line.length > 0
   })
 
   .map(line => {
-    let result = (line.match(str_regex) as string[])[0]
-    result = result.trim().replace(/"|'|`|\(|\)/g, '').trim()
-
-    let pth = join( dirname(path), result )
+    let pth = join( dirname(path), line )
     pth = join( process.cwd(), pth )
 
     try {
@@ -63,7 +57,7 @@ function imports(key:string, content:string, path:string) {
       // console.log( e )
     }
 
-    return result
+    return line
   })
 
   return Array.prototype.concat.apply([], imports)

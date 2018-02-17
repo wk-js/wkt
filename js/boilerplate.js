@@ -24,8 +24,6 @@ function parse(boilerplate, content, throwOnError = true) {
     for (const key in api) {
         code += `function ${key}() { return helpers.${key}.apply(null, arguments); }\n`;
     }
-    code += `function source() {}`;
-    code += `function api() {}`;
     code += `\n${content}`;
     try {
         require_content_1.requireContent(code, process.cwd() + '/' + boilerplate.path, api);
@@ -36,17 +34,18 @@ function parse(boilerplate, content, throwOnError = true) {
     }
 }
 function imports(key, content, path) {
-    const line_regex = new RegExp(`${key}((.+))`, 'gm');
-    const str_regex = /\(.+\)/g;
+    const line_regex = new RegExp(`\/\/@${key}=.+`, 'g');
+    const str_regex = new RegExp(`\/\/@${key}=`, 'g');
     const lines = content.match(line_regex) || [];
     const imports = lines
+        .map((line) => {
+        return line.replace(str_regex, '').trim();
+    })
         .filter((line) => {
-        return Array.isArray(line.match(str_regex));
+        return line.length > 0;
     })
         .map(line => {
-        let result = line.match(str_regex)[0];
-        result = result.trim().replace(/"|'|`|\(|\)/g, '').trim();
-        let pth = path_1.join(path_1.dirname(path), result);
+        let pth = path_1.join(path_1.dirname(path), line);
         pth = path_1.join(process.cwd(), pth);
         try {
             fs.statSync(pth);
@@ -55,7 +54,7 @@ function imports(key, content, path) {
         catch (e) {
             // console.log( e )
         }
-        return result;
+        return line;
     });
     return Array.prototype.concat.apply([], imports);
 }
