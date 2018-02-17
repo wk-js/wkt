@@ -79,7 +79,7 @@ class Configure extends order_1.Order {
                 return when_1.reduce(fns, (res, action) => action(), null);
             };
         });
-        const promise = when_1.reduce(tasks, (res, action, index) => {
+        const promise = when_1.reduce(tasks, (reduction, action, index) => {
             this.currentTask = this.order[index];
             return action();
         }, null);

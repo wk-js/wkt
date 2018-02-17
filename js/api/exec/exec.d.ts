@@ -1,9 +1,10 @@
-import { API } from "..";
+/// <reference types="when" />
+import { API } from "../api";
 import { Subprocess } from "./subprocess";
 export declare class ExecAPI extends API {
     subprocesses: Subprocess[];
     init(): void;
-    bundle(): any;
+    bundle(): When.Promise<never[]>;
     helpers(): {
         exec: (command: string, options?: any) => any;
         execSync: (command: string, options?: any) => any;

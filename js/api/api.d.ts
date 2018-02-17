@@ -1,3 +1,4 @@
+/// <reference types="when" />
 import { Boilerplate } from '../boilerplate';
 import { Resolver } from '../resolver/index';
 export interface APIStore {
@@ -9,11 +10,11 @@ export declare abstract class API {
     stores: APIStore;
     constructor(boilerplate: Boilerplate);
     abstract init(): void;
-    abstract bundle(): void;
+    abstract bundle(): any | When.Promise<any>;
     abstract helpers(): {
         [key: string]: Function;
     };
-    readonly current_bundle: string;
+    readonly current_task: string;
     store(key: string, value?: any): any;
     shared_store(key: string, value?: any): any;
     fromSource(str: string): string;
@@ -28,6 +29,6 @@ export declare abstract class API {
             [key: string]: Function;
         };
     };
-    static bundle(boilerplate: Boilerplate): any;
-    static resolve(paths: string[]): any;
+    static bundle(boilerplate: Boilerplate): When.Promise<null>;
+    static resolve(paths: string[]): When.Promise<{}>;
 }

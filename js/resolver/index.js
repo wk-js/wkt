@@ -1,9 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
-const npa2 = require("realize-package-specifier");
-const git = require("../utils/git");
-const when = require("when");
+const npa2 = __importStar(require("realize-package-specifier"));
+const git = __importStar(require("../utils/git"));
+const when = __importStar(require("when"));
 const string_1 = require("lol/utils/string");
 const function_1 = require("lol/utils/function");
 function checkPath(str) {
@@ -20,7 +27,7 @@ class Resolver {
     constructor(resolver) {
         this.resolver = resolver;
         this.sources = {};
-        function_1.bind(['get', 'register', 'resolve', 'resolveId', 'resolvePath', 'resolveRepository'], this);
+        function_1.bind(this, 'get', 'register', 'resolve', 'resolveId', 'resolvePath', 'resolveRepository');
     }
     resolve(pathOrIdOrRepo) {
         return when.promise((resolve, reject) => {
@@ -68,7 +75,7 @@ class Resolver {
                 const repo_url = repo[0];
                 const repo_committish = repo[1];
                 path = `${process.cwd()}/.tmp/${hash}`;
-                let promise = when();
+                let promise = when.resolve();
                 if (!checkPath(path)) {
                     promise = promise.then(() => {
                         return git.clone(repo_url, path);

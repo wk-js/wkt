@@ -1,6 +1,8 @@
-import { API } from "../index";
+import { API } from "../api";
 export declare class PromptAPI extends API {
-    answers: any;
+    readonly answers: {
+        [key: string]: any;
+    };
     readonly questions: {
         [key: string]: any;
     };

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const __1 = require("..");
+const api_1 = require("../api");
 const when_1 = require("when");
 const subprocess_1 = require("./subprocess");
-class ExecAPI extends __1.API {
+class ExecAPI extends api_1.API {
     constructor() {
         super(...arguments);
         this.subprocesses = [];

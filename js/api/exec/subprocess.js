@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_1 = require("lol/utils/function");
 const object_1 = require("lol/utils/object");
 const child_process_1 = require("child_process");
 const memory_stream_1 = require("../../utils/memory-stream");
-const when = require("when");
+const when = __importStar(require("when"));
 let ID = 0;
 function NOOP() { }
 var SubprocessStatuses;
@@ -23,7 +30,7 @@ class Subprocess {
         this.resolve = NOOP;
         this.reject = NOOP;
         this.status = SubprocessStatuses.PENDING;
-        function_1.bind(['execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData'], this);
+        function_1.bind(this, 'execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData');
         options = options || {};
         this.options = {
             interactive: true,

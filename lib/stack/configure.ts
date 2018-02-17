@@ -98,8 +98,8 @@ export class Configure extends Order {
       }
     })
 
-    const promise = reduce(tasks, (res:null, action:Function, index: number) => {
-      this.currentTask = this.order[ index ]
+    const promise = reduce(tasks, (reduction: null, action: Function, index?: Number) => {
+      this.currentTask = this.order[ index as number ]
       return action()
     }, null)
 

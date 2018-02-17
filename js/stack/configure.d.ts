@@ -1,4 +1,6 @@
+/// <reference types="when" />
 import { Order } from './order';
+import * as when from 'when';
 export interface ConfigureTasks {
     [key: string]: Function;
 }
@@ -15,6 +17,6 @@ export declare class Configure extends Order {
     after(after: string, key: string | Function, action?: Function): void;
     first(key: string | Function, action?: Function): void;
     last(key: string | Function, action?: Function): void;
-    execute(hooks?: any): any;
+    execute(hooks?: any): when.Promise<void>;
     private generateName(key);
 }

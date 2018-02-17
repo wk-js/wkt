@@ -1,20 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
-class StackAPI extends index_1.API {
+const api_1 = require("../api");
+class BoilerplateAPI extends api_1.API {
     init() { }
     bundle() { }
     helpers() {
         return {
-            stack: this.stack,
-            invocator: this.invocator,
+            LocalAPI: this.LocalAPI,
+            RootAPI: this.RootAPI,
+            LocalStack: this.LocalStack,
+            RootStack: this.RootStack,
             output: this.output
         };
     }
-    stack() {
+    LocalAPI() {
+        return this.boilerplate.api.helpers;
+    }
+    RootAPI() {
+        return this.boilerplate.root.api.helpers;
+    }
+    LocalStack() {
         return this.boilerplate.stack;
     }
-    invocator() {
+    RootStack() {
         return this.boilerplate.root.stack;
     }
     output(str) {
@@ -24,4 +32,4 @@ class StackAPI extends index_1.API {
         return this.boilerplate.root.output;
     }
 }
-exports.StackAPI = StackAPI;
+exports.BoilerplateAPI = BoilerplateAPI;

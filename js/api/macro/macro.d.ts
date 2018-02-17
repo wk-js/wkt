@@ -1,4 +1,4 @@
-import { API } from "../index";
+import { API } from "../api";
 export declare class MacroAPI extends API {
     readonly macros: any;
     init(): void;

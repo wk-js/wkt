@@ -13,24 +13,14 @@ class API {
         this.stores = {};
         this.init();
     }
-    get current_bundle() {
-        return this.boilerplate.current_bundle;
+    get current_task() {
+        return this.boilerplate.current_task;
     }
     store(key, value) {
-        this.stores[this.current_bundle] = this.stores[this.current_bundle] || {};
-        if (arguments.length === 2) {
-            this.stores[this.current_bundle][key] = value;
-            return this.stores[this.current_bundle][key];
-        }
-        return this.stores[this.current_bundle][key];
+        return this.boilerplate.store(key, value);
     }
     shared_store(key, value) {
-        this.stores['__shared'] = this.stores['__shared'] || {};
-        if (arguments.length === 2) {
-            this.stores['__shared'][key] = value;
-            return this.stores['__shared'][key];
-        }
-        return this.stores['__shared'][key];
+        return this.boilerplate.root.store(key, value);
     }
     fromSource(str) {
         return path_1.join(this.boilerplate.src_path, str);

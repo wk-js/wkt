@@ -35,7 +35,7 @@ export class Subprocess {
   processOptions:any
 
   constructor(public command:string, public options?:any) {
-    bind([ 'execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData' ], this)
+    bind(this, 'execute', '_onError', '_onExit', '_onStdOutData', '_onStdErrData')
 
     options = options || {}
 

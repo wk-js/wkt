@@ -1,13 +1,20 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("./api/index");
+const api_1 = require("./api/api");
 const configure_1 = require("./stack/configure");
-const fs = require("fs");
-const when = require("when");
+const fs = __importStar(require("fs"));
+const when = __importStar(require("when"));
 const path_1 = require("path");
 const function_1 = require("lol/utils/function");
 const array_1 = require("lol/utils/array");
-const index_2 = require("./resolver/index");
+const index_1 = require("./resolver/index");
 const require_content_1 = require("./utils/require-content");
 function parse(boilerplate, content, throwOnError = true) {
     let code = "var helpers = this;\n";
@@ -53,22 +60,19 @@ function imports(key, content, path) {
 function resolver(path) {
     return path;
 }
-const BoilerplateResolver = new index_2.Resolver((path) => path);
+const BoilerplateResolver = new index_1.Resolver((path) => path);
 class Boilerplate {
     constructor(input, output) {
         this.input = input;
         this.output = output;
         this.configs = {};
+        this.stores = {};
         this.stack = new configure_1.Configure();
         this.path = '';
-        // api: {
-        //   apis:    { [key:string]: API }
-        //   helpers: { [key:string]: Function }
-        // }
         this.parent = null;
         this.children = [];
-        function_1.bind(['parse', 'execute'], this);
-        this.stack.add('bundle');
+        function_1.bind(this, 'parse', 'execute', 'bundle');
+        this.stack.add('bundle', this.bundle);
     }
     get src_path() {
         return path_1.normalize(path_1.dirname(this.path));
@@ -76,7 +80,7 @@ class Boilerplate {
     get dst_path() {
         return path_1.normalize(this.is_root ? this.output : this.root.output);
     }
-    get current_bundle() {
+    get current_task() {
         return this.stack.currentTask ? this.stack.currentTask : 'bundle';
     }
     get root() {
@@ -92,6 +96,13 @@ class Boilerplate {
         }
         return this.configs[key];
     }
+    store(key, value) {
+        if (typeof value !== 'undefined') {
+            this.stores[key] = value;
+            return this.stores[key];
+        }
+        return this.stores[key];
+    }
     resolve() {
         return Boilerplate.Resolver.resolve(this.input).then(this.parse);
     }
@@ -106,12 +117,12 @@ class Boilerplate {
     }
     resolveAPIs(content) {
         const api_imports = imports('api', content, this.path);
-        api_imports.push('exec', 'file', 'macro', 'prompt', 'stack', 'template');
+        api_imports.push('boilerplate', 'file');
         return when.all(api_imports.map(function (path) {
-            return index_1.API.Resolver.resolve(path);
+            return api_1.API.Resolver.resolve(path);
         }))
             .then(() => {
-            this.api = index_1.API.create(this, array_1.unique(api_imports));
+            this.api = api_1.API.create(this, array_1.unique(api_imports));
             parse(this, content);
         });
     }
@@ -122,7 +133,7 @@ class Boilerplate {
         }))
             .then((paths) => {
             const boilerplates = paths.map((path) => {
-                const bp = new Boilerplate(path, this.output);
+                const bp = new Boilerplate(path_1.relative(process.cwd(), path), this.output);
                 bp.parent = this;
                 return bp;
             });
@@ -130,15 +141,27 @@ class Boilerplate {
             return when.all(boilerplates.map((bp) => bp.resolve()));
         });
     }
+    bundle() {
+        return api_1.API.bundle(this);
+    }
     execute() {
-        return when.reduce(this.children, (res, bp) => bp.execute(), null)
-            .then(() => {
-            return this.stack.execute({
-                afterTask: () => index_1.API.bundle(this)
-            });
+        this.stack.before('bundle', 'bundle:children', () => {
+            return when.reduce(this.children, (res, bp) => {
+                return bp.execute();
+            }, null)
+                .then(() => true);
+        });
+        return this.stack.execute({
+            beforeTask: () => {
+                let print = `[wkt] Execute "${this.stack.currentTask}" from "${this.input}"`;
+                if (this.is_root)
+                    print += ' (root)';
+                console.log(print);
+            }
         })
             .then(() => {
-            console.log(`Bundle "${this.input}" done!`);
+            console.log(`[wkt] Bundle "${this.input}" done!`);
+            return true;
         });
     }
 }

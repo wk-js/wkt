@@ -1,4 +1,4 @@
-import { API } from "..";
+import { API } from "../api";
 import { spawn } from "child_process";
 import { reduce } from 'when'
 import { Subprocess } from "./subprocess";

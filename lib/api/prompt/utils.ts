@@ -1,4 +1,4 @@
-import * as when from 'when';
+import { promise } from 'when';
 
 export function prompt( message:string, options?:any ) {
 
@@ -11,7 +11,7 @@ export function prompt( message:string, options?:any ) {
     options.empty = true
   }
 
-  return when.promise(function(resolve:Function) {
+  return promise<string>(function(resolve:Function) {
     process.stdin.resume()
     process.stdin.setEncoding( 'utf-8' )
 

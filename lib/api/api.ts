@@ -25,34 +25,20 @@ export abstract class API {
 
   abstract init() : void
 
-  abstract bundle() : void
+  abstract bundle() : any | When.Promise<any>
 
   abstract helpers() : { [key:string]: Function }
 
-  get current_bundle() {
-    return this.boilerplate.current_bundle
+  get current_task() {
+    return this.boilerplate.current_task
   }
 
   store(key:string, value?:any) {
-    this.stores[this.current_bundle] = this.stores[this.current_bundle] || {}
-
-    if (arguments.length === 2) {
-      this.stores[this.current_bundle][key] = value
-      return this.stores[this.current_bundle][key]
-    }
-
-    return this.stores[this.current_bundle][key]
+    return this.boilerplate.store(key, value)
   }
 
   shared_store(key:string, value?:any) {
-    this.stores['__shared'] = this.stores['__shared'] || {}
-
-    if (arguments.length === 2) {
-      this.stores['__shared'][key] = value
-      return this.stores['__shared'][key]
-    }
-
-    return this.stores['__shared'][key]
+    return this.boilerplate.root.store(key, value)
   }
 
   fromSource(str:string) {

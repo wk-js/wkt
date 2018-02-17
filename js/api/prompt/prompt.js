@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+const api_1 = require("../api");
 const utils_1 = require("./utils");
-class PromptAPI extends index_1.API {
-    constructor() {
-        super(...arguments);
-        this.answers = {};
+class PromptAPI extends api_1.API {
+    get answers() {
+        return this.shared_store('answers') ? this.shared_store('answers') : this.shared_store('answers', {});
     }
     get questions() {
         return this.store('questions') ? this.store('questions') : this.store('questions', {});

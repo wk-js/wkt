@@ -1,4 +1,4 @@
-import { API } from './api/index';
+import { API } from './api/api';
 import { Configure } from './stack/configure';
 import { Mixin, MixinClass } from './utils/mixin'
 import * as fs from 'fs'
@@ -77,20 +77,17 @@ export class Boilerplate {
   static Resolver = BoilerplateResolver
 
   configs: { [key: string]: any } = {}
+  stores: { [key: string]: any } = {}
   stack: Configure = new Configure()
   path: string = ''
   api: any
-  // api: {
-  //   apis:    { [key:string]: API }
-  //   helpers: { [key:string]: Function }
-  // }
 
   parent:Boilerplate | null = null
   children: Boilerplate[] = []
 
   constructor(public input:string, public output:string) {
-    bind([ 'parse', 'execute' ], this)
-    this.stack.add( 'bundle' )
+    bind(this, 'parse', 'execute', 'bundle')
+    this.stack.add( 'bundle', this.bundle )
   }
 
   get src_path() {
@@ -101,7 +98,7 @@ export class Boilerplate {
     return normalize(this.is_root ? this.output : this.root.output)
   }
 
-  get current_bundle() {
+  get current_task() {
     return this.stack.currentTask ? this.stack.currentTask : 'bundle'
   }
 
@@ -122,11 +119,20 @@ export class Boilerplate {
     return this.configs[key]
   }
 
+  store(key: string, value?: any) : any | undefined {
+    if (typeof value !== 'undefined') {
+      this.stores[key] = value
+      return this.stores[key]
+    }
+
+    return this.stores[key]
+  }
+
   resolve() {
     return Boilerplate.Resolver.resolve( this.input ).then( this.parse )
   }
 
-  parse(pth:string) {
+  parse(pth:string) : When.Promise<null> {
     this.path = pth
 
     const scope = this
@@ -140,7 +146,7 @@ export class Boilerplate {
 
   resolveAPIs(content:string) {
     const api_imports = imports( 'api', content, this.path )
-    api_imports.push( 'exec', 'file', 'macro', 'prompt', 'stack', 'template' )
+    api_imports.push( 'boilerplate', 'file' )
 
     return when.all(api_imports.map(function(path:string) {
       return API.Resolver.resolve(path)
@@ -155,13 +161,13 @@ export class Boilerplate {
   resolveSources(content:string) {
     const src_imports = imports( 'source', content, this.path )
 
-    return when.all(src_imports.map(function(path:string) {
+    return when.all<string[]>(src_imports.map(function(path:string) {
       return Boilerplate.Resolver.resolve(path)
     }))
 
     .then((paths:string[]) => {
       const boilerplates = paths.map((path:string) => {
-        const bp = new Boilerplate( path, this.output )
+        const bp = new Boilerplate( relative(process.cwd(), path), this.output )
         bp.parent = this
         return bp
       })
@@ -172,17 +178,29 @@ export class Boilerplate {
     })
   }
 
-  execute() {
-    return when.reduce(this.children, (res:null, bp:Boilerplate) => bp.execute(), null)
+  bundle() {
+    return API.bundle( this )
+  }
 
-    .then(() => {
-      return this.stack.execute({
-        afterTask: () => API.bundle( this )
-      })
+  execute() : When.Promise<boolean> {
+    this.stack.before('bundle', 'bundle:children', () => {
+      return when.reduce(this.children, (res:any, bp:Boilerplate) => {
+        return bp.execute()
+      }, null)
+      .then(() => true)
+    })
+
+    return this.stack.execute({
+      beforeTask: () => {
+        let print = `[wkt] Execute "${this.stack.currentTask}" from "${this.input}"`
+        if (this.is_root) print += ' (root)'
+        console.log( print )
+      }
     })
 
     .then(() => {
-      console.log(`Bundle "${this.input}" done!`)
+      console.log(`[wkt] Bundle "${this.input}" done!`)
+      return true
     })
   }
 

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
-class MacroAPI extends index_1.API {
+const api_1 = require("../api");
+class MacroAPI extends api_1.API {
     get macros() {
         return this.store('macros') ? this.store('macros') : this.store('macros', {});
     }

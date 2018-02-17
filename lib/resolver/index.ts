@@ -22,11 +22,11 @@ export class Resolver<T> {
   sources: { [key:string]: T } = {}
 
   constructor(public resolver:Function) {
-    bind([ 'get', 'register', 'resolve', 'resolveId', 'resolvePath', 'resolveRepository' ], this)
+    bind(this, 'get', 'register', 'resolve', 'resolveId', 'resolvePath', 'resolveRepository')
   }
 
   resolve(pathOrIdOrRepo:string) {
-    return when.promise((resolve:Function, reject:Function) => {
+    return when.promise<T>((resolve:Function, reject:Function) => {
       const iterator = new ResolveIterator([
         this.resolveId,
         this.resolvePath,
@@ -35,6 +35,7 @@ export class Resolver<T> {
 
       iterator.next()
     })
+
     .then((item:T) => {
       this.register( pathOrIdOrRepo, item )
       return item
@@ -83,7 +84,7 @@ export class Resolver<T> {
 
         path = `${process.cwd()}/.tmp/${hash}`
 
-        let promise = when()
+        let promise = when.resolve()
 
         if (!checkPath( path )) {
           promise = promise.then(() => {
