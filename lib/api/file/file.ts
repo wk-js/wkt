@@ -64,8 +64,8 @@ export class FileAPI extends API {
   }
 
   bundle() {
-    this.asset.load_path     = dirname( this.boilerplate.input )
-    this.asset.dst_path      = this.boilerplate.output
+    this.asset.load_path     = this.boilerplate.src_path
+    this.asset.dst_path      = this.boilerplate.dst_path
     this.asset.save_manifest = false
 
     return this.asset.resolve(true)

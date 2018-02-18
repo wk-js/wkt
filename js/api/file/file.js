@@ -53,8 +53,8 @@ class FileAPI extends api_1.API {
         this.boilerplate.root.stack.after('bundle', 'render:template', this._copyAndRender);
     }
     bundle() {
-        this.asset.load_path = path_1.dirname(this.boilerplate.input);
-        this.asset.dst_path = this.boilerplate.output;
+        this.asset.load_path = this.boilerplate.src_path;
+        this.asset.dst_path = this.boilerplate.dst_path;
         this.asset.save_manifest = false;
         return this.asset.resolve(true);
     }

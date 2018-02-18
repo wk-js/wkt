@@ -2,9 +2,9 @@ import { API } from './api/api';
 import { Configure } from './stack/configure';
 import { Mixin, MixinClass } from './utils/mixin'
 import * as fs from 'fs'
-import * as when from 'when'
+import when from 'when'
 import { setTimeout } from 'timers';
-import { dirname, relative, join, normalize } from 'path';
+import { dirname, relative, join, normalize, basename, isAbsolute } from 'path';
 import { bind, scope } from 'lol/utils/function';
 import { unique } from 'lol/utils/array'
 import { Resolver } from './resolver/index';
@@ -12,6 +12,8 @@ import { requireContent } from './utils/require-content';
 import { Print } from 'wk-print/js/print';
 import { TagExtension } from 'wk-print/js/extensions/tag';
 import { DebugCategory } from 'wk-print/js/categories/debug';
+import { isFile } from 'asset-pipeline/js/utils/fs';
+import { ask } from './api/prompt/utils';
 
 function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = true ) {
   let code = "var helpers = this;\n"
@@ -32,35 +34,53 @@ function parse( boilerplate:Boilerplate, content:string, throwOnError:boolean = 
 }
 
 function imports(key:string, content:string, path:string) {
-  const line_regex = new RegExp(`\/\/@${key}=.+`, 'g')
-  const str_regex  = new RegExp(`\/\/@${key}=`, 'g')
+  const line_regex = new RegExp(`\/\/@${key}(\\?)?=.+`, 'g')
+  const str_regex  = new RegExp(`\/\/@${key}(\\?)?=`, 'g')
+  const optional_regex = new RegExp(`\/\/@${key}\\?=`, 'g')
 
-  const lines   = content.match( line_regex ) || []
-  const imports = lines
+  const lines = content.match( line_regex ) || []
 
-  .map((line) => {
-    return line.replace(str_regex, '').trim()
-  })
+  return when.reduce<string[]>(lines, (reducer:string[], line:string) => {
+    const result = line.replace(str_regex, '').trim()
 
-  .filter((line) => {
-    return line.length > 0
-  })
-
-  .map(line => {
-    let pth = join( dirname(path), line )
-    pth = join( process.cwd(), pth )
-
-    try {
-      fs.statSync( pth )
-      return pth
-    } catch(e) {
-      // console.log( e )
+    if (line.match(optional_regex)) {
+      return ask(`Use ${basename(dirname(line))} ${key}?`).then(function(confirm) {
+        if (confirm) reducer.push( result )
+        return reducer
+      })
     }
 
-    return line
+    reducer.push( result )
+    return reducer
+  }, [])
+
+  .then(function(lines:string[]) {
+    return lines.filter((line:string) => !line ? false : (line.length > 0))
   })
 
-  return Array.prototype.concat.apply([], imports)
+  // .then(function(lines:string[]) {
+  //   return lines.map(function(line:string) {
+
+
+
+  //     // console.log( line )
+
+  //     // let pth = join( dirname(path), line )
+
+  //     // if (!isAbsolute( pth )) {
+  //     //   pth = join( process.cwd(), pth )
+  //     // }
+
+  //     // try {
+  //     //   fs.statSync( pth )
+  //     //   return pth
+  //     // } catch(e) {
+  //     //   throw new Error(`Cannot find ${pth}`)
+  //     // }
+
+
+  //   })
+  // })
 }
 
 function resolver(path:string) {
@@ -84,7 +104,7 @@ export class Boilerplate {
 
   print: any = new Print
 
-  constructor(public input:string, public output:string) {
+  constructor(private _input:string, private _output:string) {
     bind(this, 'parse', 'execute', 'bundle')
     this.stack.add( 'bundle', this.bundle )
 
@@ -100,11 +120,21 @@ export class Boilerplate {
   }
 
   get src_path() {
-    return normalize(dirname( this.path ))
+    return normalize(relative(process.cwd(), dirname( this.path )))
   }
 
   get dst_path() {
-    return normalize(this.is_root ? this.output : this.root.output)
+    return normalize(this.is_root ? this._output : this.root._output)
+  }
+
+  get absolute_src_path() {
+    return normalize(dirname( this.path ))
+  }
+
+  get absolute_dst_path() {
+    const output = normalize(this.is_root ? this._output : this.root._output)
+    if (isAbsolute(output)) return output
+    return join( process.cwd(), output )
   }
 
   get current_task() {
@@ -117,6 +147,10 @@ export class Boilerplate {
 
   get is_root() : boolean {
     return this.root === this
+  }
+
+  setOutput(output:string) {
+    return this._output = output
   }
 
   config(key: string, value?: any) : any | undefined {
@@ -138,10 +172,15 @@ export class Boilerplate {
   }
 
   resolve() {
-    return Boilerplate.Resolver.resolve( this.input ).then( this.parse )
+    return Boilerplate.Resolver.resolve( this._input, process.cwd() ).then( this.parse )
   }
 
   parse(pth:string) : When.Promise<null> {
+    if (!isFile(pth)) {
+      pth = join(pth, 'template.js')
+      if (!isFile(pth)) return when.resolve(null)
+    }
+
     this.path = pth
 
     const scope = this
@@ -154,29 +193,38 @@ export class Boilerplate {
   }
 
   resolveAPIs(content:string) {
-    const api_imports = imports( 'api', content, this.path )
-    api_imports.push( 'boilerplate', 'file' )
+    return imports( 'api', content, this.path ).then((imports) => {
+      imports.push( 'boilerplate', 'file' )
+      return imports
+    })
 
-    return when.all(api_imports.map(function(path:string) {
-      return API.Resolver.resolve(path)
-    }))
+    .then((imports) => {
+      return when.all<new (...args: any[]) => API>(imports.map((path:string) => {
+        return API.Resolver.resolve(path, this.path)
+      }))
 
-    .then(() => {
-      this.api = API.create( this, unique(api_imports) )
+      .then(() => imports)
+    })
+
+    .then((imports) => {
+      imports = imports.concat( this.getUsedAPIs() )
+      this.api = API.create( this, unique(imports) )
       parse( this, content )
     })
   }
 
   resolveSources(content:string) {
-    const src_imports = imports( 'source', content, this.path )
+    return imports( 'source', content, this.path )
 
-    return when.all<string[]>(src_imports.map(function(path:string) {
-      return Boilerplate.Resolver.resolve(path)
-    }))
+    .then((imports) => {
+      return when.all<string[]>(imports.map((path:string) => {
+        return Boilerplate.Resolver.resolve(path, this.path)
+      }))
+    })
 
     .then((paths:string[]) => {
       const boilerplates = paths.map((path:string) => {
-        const bp = new Boilerplate( relative(process.cwd(), path), this.output )
+        const bp = new Boilerplate( relative(process.cwd(), path), this._output )
         bp.parent = this
         return bp
       })
@@ -191,6 +239,20 @@ export class Boilerplate {
     return API.bundle( this )
   }
 
+  getUsedAPIs() {
+    let apis:string[] = []
+
+    for (let i = 0, ilen = this.children.length; i < ilen; i++) {
+      apis = apis.concat( apis, this.children[i].getUsedAPIs() )
+    }
+
+    if (this.api) {
+      apis = apis.concat( Object.keys(this.api.apis) )
+    }
+
+    return unique( apis )
+  }
+
   execute() : When.Promise<boolean> {
     this.stack.before('bundle', 'bundle:children', () => {
       return when.reduce(this.children, (res:any, bp:Boilerplate) => {
@@ -201,14 +263,14 @@ export class Boilerplate {
 
     return this.stack.execute({
       beforeTask: () => {
-        let print = `Execute ${this.print.green(this.stack.currentTask as string)} from ${this.print.magenta(this.input)}`
+        let print = `Execute ${this.print.green(this.stack.currentTask as string)} from ${this.print.magenta(this._input)}`
         if (this.is_root) print += this.print.yellow(' (root)')
         this.print.debug( print )
       }
     })
 
     .then(() => {
-      this.print.debug(`Bundle ${this.print.magenta(this.input)} done!`)
+      this.print.debug(`Bundle ${this.print.magenta(this._input)} done!`)
       return true
     })
   }

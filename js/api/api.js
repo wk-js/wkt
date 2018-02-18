@@ -58,11 +58,6 @@ class API {
             return bundle();
         }, null);
     }
-    static resolve(paths) {
-        return when_1.all(paths.map(function (path) {
-            return API.Resolver.resolve(path);
-        }));
-    }
 }
 API.Resolver = APIResolver;
 exports.API = API;

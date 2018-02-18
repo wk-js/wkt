@@ -1,16 +1,20 @@
 import { statSync } from "fs"
 import { Iterator } from '../utils/iterator'
-import * as npa2 from 'realize-package-specifier'
+import npa2 from 'realize-package-specifier'
 import * as git from '../utils/git'
 import * as when from 'when'
 import { toSlug } from 'lol/utils/string'
 import { bind } from 'lol/utils/function'
+import { isFile } from "asset-pipeline/js/utils/fs";
+import { dirname, join } from "path";
+
+function NOOP() {}
 
 function checkPath( str:string ) {
   try {
     statSync( str )
   } catch(e) {
-    console.log(`"${str}" does not exist.`)
+    // console.log(`"${str}" does not exist.`)
     return false
   }
 
@@ -21,20 +25,18 @@ export class Resolver<T> {
 
   sources: { [key:string]: T } = {}
 
-  constructor(public resolver:Function) {
+  constructor(private resolver:Function) {
     bind(this, 'get', 'register', 'resolve', 'resolveId', 'resolvePath', 'resolveRepository')
   }
 
-  resolve(pathOrIdOrRepo:string) {
-    return when.promise<T>((resolve:Function, reject:Function) => {
-      const iterator = new ResolveIterator([
-        this.resolveId,
-        this.resolvePath,
-        this.resolveRepository
-      ], pathOrIdOrRepo, resolve, reject)
+  resolve(pathOrIdOrRepo:string, relativeTo:string) {
+    const iterator = new ResolveIterator<T>([
+      this.resolveId,
+      this.resolvePath,
+      this.resolveRepository
+    ], pathOrIdOrRepo, relativeTo)
 
-      iterator.next()
-    })
+    return iterator.start()
 
     .then((item:T) => {
       this.register( pathOrIdOrRepo, item )
@@ -50,18 +52,32 @@ export class Resolver<T> {
     this.sources[ id ] = item
   }
 
-  private resolveId( iterator:ResolveIterator ) {
+  private resolveId( iterator:ResolveIterator<T> ) {
     const path = this.get( iterator.pathOrIdOrRepo )
-    path ? iterator.complete( path ) : iterator.next()
+    path ? iterator.resolve( path ) : iterator.next()
   }
 
-  private resolvePath( iterator:ResolveIterator ) {
-    checkPath(iterator.pathOrIdOrRepo) ?
-    iterator.complete( this.resolver(iterator.pathOrIdOrRepo) ) :
+  private resolvePath( iterator:ResolveIterator<T> ) {
+    const resolve_paths = [ process.cwd() ]
+
+    if (isFile(iterator.relativeToPath)) {
+      resolve_paths.push( dirname(iterator.relativeToPath) )
+    }
+
+    let result
+
+    for (let i = 0, ilen = resolve_paths.length; i < ilen; i++) {
+      result = join( resolve_paths[i], iterator.pathOrIdOrRepo )
+      if (checkPath(result)) {
+        iterator.resolve( this.resolver(result) )
+        break;
+      }
+    }
+
     iterator.next()
   }
 
-  private resolveRepository( iterator:ResolveIterator ) {
+  private resolveRepository( iterator:ResolveIterator<T> ) {
 
     npa2( iterator.pathOrIdOrRepo, (err:any, res:any) => {
       if (err) {
@@ -98,7 +114,7 @@ export class Resolver<T> {
           })
         }
 
-        promise.then(() => iterator.complete( this.resolver(path) ))
+        promise.then(() => iterator.resolve( this.resolver(path) ))
       }
     })
 
@@ -106,7 +122,7 @@ export class Resolver<T> {
 
 }
 
-class ResolveIterator implements Iterator<Function> {
+class ResolveIterator<T> implements Iterator<Function> {
 
   private pointer = -1
   public resolved = false
@@ -114,8 +130,9 @@ class ResolveIterator implements Iterator<Function> {
   constructor(
     private functions:Function[],
     public pathOrIdOrRepo:string,
-    public complete:Function,
-    public fail:Function
+    public relativeToPath:string,
+    public resolve:Function = NOOP,
+    public reject:Function = NOOP
   ) {}
 
   next() {
@@ -128,12 +145,30 @@ class ResolveIterator implements Iterator<Function> {
       }
     }
 
-    this.fail()
+    if (!this.resolved) {
+      this.reject(new Error(`Cannot resolve "${this.pathOrIdOrRepo}"`))
+    }
 
     return {
       done: true,
       value: null
     }
+  }
+
+  start() {
+    return when.promise<T>((resolve:Function, reject:Function) => {
+      this.resolve = (item:T) => {
+        this.resolved = true
+        resolve(item)
+      }
+
+      this.reject = (e:Error) => {
+        this.resolved = true
+        reject(e)
+      }
+
+      this.next()
+    })
   }
 
 }

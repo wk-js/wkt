@@ -30,5 +30,4 @@ export declare abstract class API {
         };
     };
     static bundle(boilerplate: Boilerplate): When.Promise<null>;
-    static resolve(paths: string[]): When.Promise<{}>;
 }

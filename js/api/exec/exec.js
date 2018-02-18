@@ -1,20 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../api");
-const when_1 = require("when");
 const subprocess_1 = require("./subprocess");
 class ExecAPI extends api_1.API {
-    constructor() {
-        super(...arguments);
-        this.subprocesses = [];
-    }
     init() { }
-    bundle() {
-        const subprocesses = this.subprocesses.map((sub) => {
-            return () => sub.execute();
-        });
-        return when_1.reduce(subprocesses, (res, action) => action(), null).then(() => this.subprocesses = []);
-    }
+    bundle() { }
     helpers() {
         return {
             exec: this.exec,
@@ -24,15 +14,13 @@ class ExecAPI extends api_1.API {
     exec(command, options) {
         options = options || {};
         options.async = true;
-        options.cwd = this.boilerplate.output;
-        const sub = subprocess_1.Subprocess.create(command, options);
-        this.subprocesses.push(sub);
-        return sub.promise;
+        options.cwd = this.boilerplate.dst_path;
+        return subprocess_1.Subprocess.execute(command, options);
     }
     execSync(command, options) {
         options = options || {};
         options.async = false;
-        options.cwd = this.boilerplate.output;
+        options.cwd = this.boilerplate.dst_path;
         return subprocess_1.Subprocess.execute(command, options);
     }
 }

@@ -87,10 +87,10 @@ export abstract class API {
     }, null)
   }
 
-  static resolve(paths:string[]) {
-    return all(paths.map(function(path) {
-      return API.Resolver.resolve(path)
-    }))
-  }
+  // static resolve(paths:string[]) {
+  //   return all(paths.map(function(path) {
+  //     return API.Resolver.resolve(path)
+  //   }))
+  // }
 
 }

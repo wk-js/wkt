@@ -27,9 +27,9 @@ class BoilerplateAPI extends api_1.API {
     }
     output(str) {
         if (typeof str === 'string') {
-            this.boilerplate.root.output = str;
+            this.boilerplate.root.setOutput(str);
         }
-        return this.boilerplate.root.output;
+        return this.boilerplate.root.dst_path;
     }
 }
 exports.BoilerplateAPI = BoilerplateAPI;

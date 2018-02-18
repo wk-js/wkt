@@ -36,10 +36,10 @@ export class BoilerplateAPI extends API {
 
   output(str?:string) {
     if (typeof str === 'string') {
-      this.boilerplate.root.output = str
+      this.boilerplate.root.setOutput( str )
     }
 
-    return this.boilerplate.root.output
+    return this.boilerplate.root.dst_path
   }
 
 }

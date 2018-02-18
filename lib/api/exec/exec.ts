@@ -5,17 +5,9 @@ import { Subprocess } from "./subprocess";
 
 export class ExecAPI extends API {
 
-  subprocesses:Subprocess[] = []
-
   init() {}
 
-  bundle() {
-    const subprocesses = this.subprocesses.map((sub) => {
-      return () => sub.execute()
-    })
-
-    return reduce( subprocesses, (res:null, action:Function) => action(), null ).then(() => this.subprocesses = [])
-  }
+  bundle() {}
 
   helpers() {
     return {
@@ -27,17 +19,15 @@ export class ExecAPI extends API {
   exec(command:string, options?:any) {
     options       = options || {}
     options.async = true
-    options.cwd   = this.boilerplate.output
+    options.cwd   = this.boilerplate.dst_path
 
-    const sub = Subprocess.create(command, options)
-    this.subprocesses.push( sub )
-    return sub.promise
+    return Subprocess.execute(command, options)
   }
 
   execSync(command:string, options?:any) {
     options       = options || {}
     options.async = false
-    options.cwd   = this.boilerplate.output
+    options.cwd   = this.boilerplate.dst_path
 
     return Subprocess.execute(command, options)
   }
