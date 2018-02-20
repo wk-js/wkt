@@ -10,58 +10,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_1 = require("./api/api");
-const configure_1 = require("./stack/configure");
+const api_1 = require("../api/api");
+const configure_1 = require("../stack/configure");
 const fs = __importStar(require("fs"));
 const when_1 = __importDefault(require("when"));
 const path_1 = require("path");
 const function_1 = require("lol/utils/function");
 const array_1 = require("lol/utils/array");
-const index_1 = require("./resolver/index");
-const require_content_1 = require("./utils/require-content");
+const index_1 = require("../resolver/index");
 const fs_1 = require("asset-pipeline/js/utils/fs");
-const utils_1 = require("./api/prompt/utils");
-const print_1 = require("./print");
-function parse(boilerplate, content, throwOnError = true) {
-    let code = "var helpers = this;\n";
-    const api = boilerplate.api.helpers;
-    for (const key in api) {
-        code += `function ${key}() { return helpers.${key}.apply(null, arguments); }\n`;
-    }
-    code += `\n${content}`;
-    try {
-        require_content_1.requireContent(code, process.cwd() + '/' + boilerplate.path, api);
-    }
-    catch (e) {
-        if (throwOnError)
-            throw e;
-    }
-}
-function imports(key, content, path) {
-    const line_regex = new RegExp(`\/\/@${key}(\\?)?=.+`, 'g');
-    const str_regex = new RegExp(`\/\/@${key}(\\?)?=`, 'g');
-    const optional_regex = new RegExp(`\/\/@${key}\\?=`, 'g');
-    const lines = content.match(line_regex) || [];
-    return when_1.default.reduce(lines, (reducer, line) => {
-        const result = line.replace(str_regex, '').trim();
-        if (line.match(optional_regex)) {
-            return utils_1.ask(print_1.P.grey(`${print_1.P.green('[wkt]')} Do you want to resolve ${print_1.P.green(result)} ?`))
-                .then(function (confirm) {
-                if (confirm)
-                    reducer.push(result);
-                return reducer;
-            });
-        }
-        reducer.push(result);
-        return reducer;
-    }, [])
-        .then(function (lines) {
-        return lines.filter((line) => !line ? false : (line.length > 0));
-    });
-}
-function resolver(path) {
-    return path;
-}
+const print_1 = require("../print");
+const utils_1 = require("./utils");
+const front_matter_1 = __importDefault(require("front-matter"));
 const BoilerplateResolver = new index_1.Resolver((path) => path);
 class Boilerplate {
     constructor(_output) {
@@ -124,41 +84,43 @@ class Boilerplate {
                 return when_1.default.resolve(null);
         }
         this.path = pth;
-        this.name = path_1.extname(pth).length > 0 ? path_1.basename(path_1.dirname(pth)) : path_1.basename(pth);
         const scope = this;
         const content = fs.readFileSync(this.path, 'utf-8');
-        return when_1.default.reduce([
-            function () { return scope.resolveSources(content); },
-            function () { return scope.resolveAPIs(content); }
-        ], (res, action) => action(), null);
+        const result = front_matter_1.default(content);
+        const attrs = Object.assign({
+            name: path_1.extname(pth).length > 0 ? path_1.basename(path_1.dirname(pth)) : path_1.basename(pth),
+            sources: [],
+            optionalSources: [],
+            apis: [],
+            optionalApis: []
+        }, result.attributes);
+        this.name = attrs.name;
+        return utils_1.fetch_optionals(attrs.sources, attrs.optionalSources)
+            .then(() => utils_1.fetch_optionals(attrs.apis, attrs.optionalApis))
+            .then(() => {
+            return when_1.default.reduce([
+                function () { return scope.resolveSources(attrs.sources); },
+                function () { return scope.resolveAPIs(attrs.apis, result.body); }
+            ], (res, action) => action(), null);
+        });
     }
-    resolveAPIs(content) {
-        return imports('api', content, this.path).then((apis) => {
-            apis.push('boilerplate', 'file');
-            return apis;
-        })
-            .then((apis) => {
-            return when_1.default.all(apis.map((path) => {
-                return api_1.API.Resolver.resolve(path, this.path);
-            }))
-                .then(() => apis);
-        })
-            .then((apis) => {
+    resolveAPIs(apis, content) {
+        return when_1.default.all(apis.map((path) => {
+            return api_1.API.Resolver.resolve(path, this.path);
+        }))
+            .then(() => {
             apis = apis.concat(this.getUsedAPIs());
             this.api = api_1.API.create(this, array_1.unique(apis));
-            parse(this, content);
+            utils_1.parse(this, content);
         });
     }
-    resolveSources(content) {
-        return imports('source', content, this.path)
-            .then((sources) => {
-            return when_1.default.all(sources.map((path) => {
-                const bp = new Boilerplate(this._output);
-                bp.parent = this;
-                this.children.push(bp);
-                return bp.resolve(path, this.path);
-            }));
-        });
+    resolveSources(sources) {
+        return when_1.default.all(sources.map((path) => {
+            const bp = new Boilerplate(this._output);
+            bp.parent = this;
+            this.children.push(bp);
+            return bp.resolve(path, this.path);
+        }));
     }
     getUsedAPIs() {
         let apis = [];

@@ -1,4 +1,4 @@
-import { Boilerplate } from '../../boilerplate'
+import { Boilerplate } from '../../boilerplate/boilerplate'
 import { API } from "../api";
 
 export class MacroAPI extends API {

@@ -5,14 +5,18 @@ export declare class BoilerplateAPI extends API {
     bundle(): void;
     helpers(): {
         LocalAPI: () => Configure;
-        RootAPI: () => any;
         LocalStack: () => Configure;
+        LocalStore: (key: string, value?: any) => any;
+        RootAPI: () => any;
         RootStack: () => Configure;
+        RootStore: (key: string, value?: any) => any;
         output: (str?: string | undefined) => string;
     };
     LocalAPI(): Configure;
     RootAPI(): any;
     LocalStack(): Configure;
     RootStack(): Configure;
+    LocalStore(key: string, value?: any): any;
+    RootStore(key: string, value?: any): any;
     output(str?: string): string;
 }

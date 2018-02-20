@@ -1,5 +1,5 @@
 import { MixinConstructor } from '../utils/mixin';
-import { Boilerplate } from '../boilerplate';
+import { Boilerplate } from '../boilerplate/boilerplate';
 import { scope } from 'lol/utils/function'
 import { join } from "path";
 import { reduce, all } from 'when';
@@ -86,11 +86,5 @@ export abstract class API {
       return bundle()
     }, null)
   }
-
-  // static resolve(paths:string[]) {
-  //   return all(paths.map(function(path) {
-  //     return API.Resolver.resolve(path)
-  //   }))
-  // }
 
 }

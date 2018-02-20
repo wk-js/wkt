@@ -1,7 +1,7 @@
 /// <reference types="when" />
-import { Configure } from './stack/configure';
+import { Configure } from '../stack/configure';
 import when from 'when';
-import { Resolver } from './resolver/index';
+import { Resolver } from '../resolver/index';
 export declare class Boilerplate {
     private _output;
     static Resolver: Resolver<string>;
@@ -30,8 +30,8 @@ export declare class Boilerplate {
     bundle(): when.Promise<null>;
     resolve(input: string, relativeTo?: string): when.Promise<null>;
     parse(pth: string): When.Promise<null>;
-    resolveAPIs(content: string): when.Promise<void>;
-    resolveSources(content: string): when.Promise<string[]>;
+    resolveAPIs(apis: string[], content: string): when.Promise<void>;
+    resolveSources(sources: string[]): when.Promise<string[]>;
     getUsedAPIs(): any[];
     execute(): When.Promise<boolean>;
 }

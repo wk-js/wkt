@@ -1,5 +1,5 @@
 /// <reference types="when" />
-import { Boilerplate } from '../boilerplate';
+import { Boilerplate } from '../boilerplate/boilerplate';
 import { Resolver } from '../resolver/index';
 export interface APIStore {
     [key: string]: any;

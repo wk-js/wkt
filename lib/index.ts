@@ -4,7 +4,7 @@ import { MacroAPI } from './api/macro/macro';
 import { BoilerplateAPI } from './api/boilerplate/boilerplate';
 import { PromptAPI } from './api/prompt/prompt';
 import { ExecAPI } from './api/exec/exec';
-import { Boilerplate } from './boilerplate';
+import { Boilerplate } from './boilerplate/boilerplate';
 
 API.Resolver.register( 'file', FileAPI )
 API.Resolver.register( 'macro', MacroAPI )

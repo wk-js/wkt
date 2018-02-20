@@ -40,6 +40,6 @@ else {
   result.config = null
   result.set( result.valid_params )
 
-  const bp = new Boilerplate( result.params.input, result.params.output )
-  bp.resolve().then( bp.execute )
+  const bp = new Boilerplate( result.params.output )
+  bp.resolve( result.params.input ).then( bp.execute )
 }

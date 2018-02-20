@@ -7,9 +7,11 @@ class BoilerplateAPI extends api_1.API {
     helpers() {
         return {
             LocalAPI: this.LocalAPI,
-            RootAPI: this.RootAPI,
             LocalStack: this.LocalStack,
+            LocalStore: this.LocalStore,
+            RootAPI: this.RootAPI,
             RootStack: this.RootStack,
+            RootStore: this.RootStore,
             output: this.output
         };
     }
@@ -24,6 +26,12 @@ class BoilerplateAPI extends api_1.API {
     }
     RootStack() {
         return this.boilerplate.root.stack;
+    }
+    LocalStore(key, value) {
+        return this.boilerplate.store(key, value);
+    }
+    RootStore(key, value) {
+        return this.boilerplate.root.store(key, value);
     }
     output(str) {
         if (typeof str === 'string') {
