@@ -13,34 +13,30 @@ See examples [here](https://github.com/wk-js/wkt-web)
 ### `boilerplate`
 
 ```ts
+// Scope value is optional. It accepts "local" or "root" scope.
 // Access to the boilerplate stack
-LocalStack() => Configure;
-LocalStack().add(key:string, callback?:Function)
-LocalStack().before(before:string, key?:string, callback?:Function)
-LocalStack().after(after:string, key?:string, callback?:Function)
-LocalStack().first(key:string, callback?:Function)
-LocalStack().last(key:string, callback?:Function)
+stack(scope?:string='local') => Configure;
+stack(scope?:string='local').add(key:string, callback?:Function)
+stack(scope?:string='local').before(before:string, key?:string, callback?:Function)
+stack(scope?:string='local').after(after:string, key?:string, callback?:Function)
+stack(scope?:string='local').first(key:string, callback?:Function)
+stack(scope?:string='local').last(key:string, callback?:Function)
 ```
 
 ```ts
-// Access to the root boilerplate stack
-RootStack() => Configure;
-RootStack().add(key:string, callback?:Function)
-RootStack().before(before:string, key?:string, callback?:Function)
-RootStack().after(after:string, key?:string, callback?:Function)
-RootStack().first(key:string, callback?:Function)
-RootStack().last(key:string, callback?:Function)
-```
-
-```ts
+// Scope value is optional. It accepts "local" or "root" scope.
 // APIs methods from local boilerplate
 // By defaults every methods of the local template are global.
-LocalAPI() => { [key:string]: Function };
+api(scope?:string='local') => { [key:string]: Function };
 ```
 
 ```ts
-// APIs methods from root boilerplate
-RootAPI() => { [key:string]: Function };
+// Scope value is optional. It accepts "local" or "root" scope.
+// APIs methods from local boilerplate
+// By defaults every methods of the local template are global.
+store(scope:string='local') => { get: (key:string) => any, set: (key:string, value:any) => any };
+store(scope:string='local').get(key:string) => any
+store(scope:string='local').set(key:string, value:any) => any
 ```
 
 ```ts
@@ -50,31 +46,35 @@ output(str?: string | undefined) => string;
 
 Example
 ```js
-LocalStack().add('hello', function() {
-  console.log('Hello World')
+stack().add('hello', function() {
+  store().set('message', 'Hello World')
 })
 
-LocalStack().after('bundle', function() {
+stack().after('hello', function() {
+  console.log( store.get('message') )
+})
+
+stack().after('bundle', function() {
   console.log('after bundle')
 })
 
-LocalStack().before('bundle', function() {
+stack().before('bundle', function() {
   console.log('before bundle')
 })
 
-RootStack().before('bundle', function() {
-  console.log('before invocator bundle')
+stack('root').before('bundle', function() {
+  console.log('before root bundle')
 })
 
-RootStack().after('bundle', function() {
-  console.log('after invocator bundle')
+stack('root').after('bundle', function() {
+  console.log('after root bundle')
 })
 
-// => before invocator bundle
+// => before root bundle
 // => before bundle
 // => after bundle
 // => Hello World
-// => after invocator bundle
+// => after root bundle
 ```
 
 ### `file`
@@ -254,11 +254,11 @@ answer(variable: string) => string | boolean;
 Example
 
 ```js
-LocalStack().before('bundle', 'prompt', function() {
+stack().before('bundle', 'prompt', function() {
   return prompt('Project name:', 'project_name')
 })
 
-LocalStack().after('bundle', 'prompt', function() {
+stack().after('bundle', 'prompt', function() {
   output(output() + '/' + answer('project_name'))
 })
 ```
@@ -281,7 +281,7 @@ optionalsSources:
   - git
   - webpack
 ---
-LocalStack().after('bundle', function() {
+stack().after('bundle', function() {
   execSync('npm install')
   removeFile('template.js')
 })

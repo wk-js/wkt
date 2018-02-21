@@ -61,7 +61,7 @@ class Boilerplate {
         return this.root === this;
     }
     setOutput(output) {
-        return this._output = output;
+        return this.root._output = output;
     }
     store(key, value) {
         if (typeof value !== 'undefined') {

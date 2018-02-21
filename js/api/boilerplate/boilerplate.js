@@ -6,32 +6,31 @@ class BoilerplateAPI extends api_1.API {
     bundle() { }
     helpers() {
         return {
-            LocalAPI: this.LocalAPI,
-            LocalStack: this.LocalStack,
-            LocalStore: this.LocalStore,
-            RootAPI: this.RootAPI,
-            RootStack: this.RootStack,
-            RootStore: this.RootStore,
+            api: this.api,
+            stack: this.stack,
+            store: this.store,
             output: this.output
         };
     }
-    LocalAPI() {
-        return this.boilerplate.api.helpers;
+    getBoilerplate(type = 'local') {
+        return type === 'local' ? this.boilerplate : this.boilerplate.root;
     }
-    RootAPI() {
-        return this.boilerplate.root.api.helpers;
+    api(type = 'local') {
+        return this.getBoilerplate(type).api.helpers;
     }
-    LocalStack() {
-        return this.boilerplate.stack;
+    stack(type = 'local') {
+        return this.getBoilerplate(type).stack;
     }
-    RootStack() {
-        return this.boilerplate.root.stack;
-    }
-    LocalStore(key, value) {
-        return this.boilerplate.store(key, value);
-    }
-    RootStore(key, value) {
-        return this.boilerplate.root.store(key, value);
+    store(type) {
+        const bp = this.getBoilerplate(type);
+        return {
+            get: function (key) {
+                return bp.store(key);
+            },
+            set: function (key, value) {
+                return bp.store(key, value);
+            }
+        };
     }
     output(str) {
         if (typeof str === 'string') {
