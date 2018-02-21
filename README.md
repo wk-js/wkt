@@ -203,12 +203,12 @@ macro('hello', 'John') // => Hello John
 
 ```ts
 // Execute a command asynchronously. Return a promise
-exec(command: string, options?:any);
+exec(command: string, options?:any) : Promise
 ```
 
 ```ts
 // Execute a command synchronously. Return process result
-execSync(command: string, options?:any);
+execSync(command: string, options?:any) : ProcessResult
 ```
 
 Same options as `spawn()`, plus some shortcuts
@@ -270,21 +270,20 @@ Load another boilerplate
 Example
 
 ```js
-//@source=github:wk-js/wkt-web#skeleton // A repository or repository with a branch/tag
-//@source=./assets/template.js // Or a file
-```
-
-Example
-```js
-//@source=../../../boilerplates/skeleton/template.js
-//@source=../../../boilerplates/assets/template.js
-//@source=../../../boilerplates/bump/template.js
-//@source=../../../boilerplates/git/template.js
-//@source=../../../boilerplates/webpack/template.js
-
+---
+name: my_boilerplate
+sources:
+  - github:wk-js/wkt-webt // An url or a repository or a repository with a branch/tag
+optionalsSources:
+  - ./skeleton/template.js
+  - assets/template.js
+  - bump
+  - git
+  - webpack
+---
 LocalStack().after('bundle', function() {
   execSync('npm install')
-  remove('template.js')
+  removeFile('template.js')
 })
 ```
 
@@ -295,6 +294,10 @@ Import custom api function
 Example
 
 ```js
-//@api=github:wk-js/wkt-api // A repository or repository with a branch/tag
-//@api=./my_custom_api.js // Or a file
+---
+apis:
+  - github:wk-js/wkt-api // An url or a repository or a repository with a branch/tag
+optionalsApis:
+  - my_custom_api.js // Or a file
+---
 ```
