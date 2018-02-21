@@ -71,7 +71,7 @@ export class Boilerplate {
   }
 
   setOutput(output:string) {
-    return this._output = output
+    return this.root._output = output
   }
 
   store(key: string, value?: any) : any | undefined {
