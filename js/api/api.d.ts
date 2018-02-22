@@ -17,10 +17,6 @@ export declare abstract class API {
     readonly current_task: string;
     store(key: string, value?: any): any;
     shared_store(key: string, value?: any): any;
-    fromSource(str: string): string;
-    fromDestination(str: string): string;
-    toSource(dst: string): string;
-    toDestination(src: string): string;
     static create(boilerplate: Boilerplate, api_list: string[]): {
         apis: {
             [key: string]: API;

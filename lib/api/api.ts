@@ -1,8 +1,6 @@
-import { MixinConstructor } from '../utils/mixin';
 import { Boilerplate } from '../boilerplate/boilerplate';
 import { scope } from 'lol/utils/function'
-import { join } from "path";
-import { reduce, all } from 'when';
+import { reduce } from 'when';
 import { Resolver } from '../resolver/index';
 
 const APIResolver = new Resolver<new (...args:any[]) => API>((path:string) => {
@@ -39,22 +37,6 @@ export abstract class API {
 
   shared_store(key:string, value?:any) {
     return this.boilerplate.root.store(key, value)
-  }
-
-  fromSource(str:string) {
-    return join( this.boilerplate.src_path, str )
-  }
-
-  fromDestination(str:string) {
-    return join( this.boilerplate.dst_path, str )
-  }
-
-  toSource(dst:string) {
-    return dst.replace( new RegExp(`^${this.boilerplate.dst_path}`), this.boilerplate.src_path )
-  }
-
-  toDestination(src:string) {
-    return src.replace( new RegExp(`^${this.boilerplate.src_path}`), this.boilerplate.dst_path )
   }
 
   static create( boilerplate:Boilerplate, api_list:string[] ) {
