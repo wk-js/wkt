@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const function_1 = require("lol/utils/function");
-const path_1 = require("path");
 const when_1 = require("when");
 const index_1 = require("../resolver/index");
 const APIResolver = new index_1.Resolver((path) => {
@@ -21,18 +20,6 @@ class API {
     }
     shared_store(key, value) {
         return this.boilerplate.root.store(key, value);
-    }
-    fromSource(str) {
-        return path_1.join(this.boilerplate.src_path, str);
-    }
-    fromDestination(str) {
-        return path_1.join(this.boilerplate.dst_path, str);
-    }
-    toSource(dst) {
-        return dst.replace(new RegExp(`^${this.boilerplate.dst_path}`), this.boilerplate.src_path);
-    }
-    toDestination(src) {
-        return src.replace(new RegExp(`^${this.boilerplate.src_path}`), this.boilerplate.dst_path);
     }
     static create(boilerplate, api_list) {
         const apis = {};
