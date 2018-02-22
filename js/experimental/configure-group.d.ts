@@ -1,10 +1,10 @@
 /// <reference types="when" />
-import { Order } from './order';
-export interface ConfigureTasks {
+import { OrderGroup } from './order-group';
+export interface ConfigureGroupTasks {
     [key: string]: Function;
 }
-export declare class Configure extends Order {
-    tasks: ConfigureTasks;
+export declare class ConfigureGroup extends OrderGroup {
+    tasks: ConfigureGroupTasks;
     counter: {
         [key: string]: number;
     };

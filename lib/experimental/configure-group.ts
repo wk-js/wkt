@@ -1,15 +1,16 @@
-import { Order } from './order';
+import { OrderGroup } from './order-group';
+import { Order } from '../stack/order';
 import { reduce } from 'when';
 
 function NOOP() {}
 
-export interface ConfigureTasks {
+export interface ConfigureGroupTasks {
   [key: string]: Function
 }
 
-export class Configure extends Order {
+export class ConfigureGroup extends OrderGroup {
 
-  tasks: ConfigureTasks = {}
+  tasks: ConfigureGroupTasks = {}
   counter: { [key:string]: number } = {}
   currentTask: string | null = null
 
@@ -39,7 +40,7 @@ export class Configure extends Order {
 
     if (typeof key === 'function') {
       action = key as Function
-      key = this.generateName( bfore+'#before' )
+      key = this.generateName( bfore+':#before' )
     }
 
     super.before( bfore, key as string )
@@ -51,7 +52,7 @@ export class Configure extends Order {
 
     if (typeof key === 'function') {
       action = key as Function
-      key = this.generateName( after+'#after' )
+      key = this.generateName( after+':#after' )
     }
 
     super.after( after, key as string )
@@ -110,3 +111,18 @@ export class Configure extends Order {
   }
 
 }
+
+
+const c = new ConfigureGroup
+
+// c.add('message')
+
+c.after('message', 'yolo')
+
+// c.after('message', 'message:after')
+// c.before('message:after', function() {})
+// c.after('message', 'lol')
+// c.before('yolo', 'message:plouf')
+// c.after('message:cool', 'cool')
+
+console.log( c.order )
