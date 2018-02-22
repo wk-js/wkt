@@ -5,7 +5,6 @@ import { AssetItemRules } from 'asset-pipeline/js/asset-pipeline';
 import { ChunkStack } from '../api/file/chunk_stack';
 import { TemplateOptions } from "lodash";
 export declare const FileAPI: object & {
-    bundle(): When.Promise<boolean>;
     _copyAndRender(): When.Promise<boolean | null>;
     bundle_copy(): When.Promise<{} | null>;
     bundle_render(): When.Promise<boolean | null>;

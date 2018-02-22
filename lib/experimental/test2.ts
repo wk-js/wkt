@@ -4,7 +4,7 @@ import { ChunkStack } from '../api/file/chunk_stack';
 import { merge } from "lol/utils/object";
 import { TemplateOptions, Dictionary } from "lodash";
 import { MergeTool } from 'asset-pipeline/js/experimental/merge-tool';
-import { all, reduce } from "when";
+import { all, reduce, promise } from "when";
 import { dirname, relative } from "path";
 import { copy } from "asset-pipeline/js/utils/fs";
 import { Boilerplate } from '../boilerplate/boilerplate';
@@ -13,8 +13,21 @@ export const FileAPI = API.create({
 
   init() {
     const boilerplate = (<Boilerplate>this.boilerplate)
-    boilerplate.stack.before('bundle', 'bundle:file', this.bundle)
     boilerplate.root.stack.after('bundle', 'render:template', this._copyAndRender)
+  },
+
+  bundle() : When.Promise<Boolean> {
+    this.asset.load_path     = (<Boilerplate>this.boilerplate).src_path
+    this.asset.dst_path      = (<Boilerplate>this.boilerplate).dst_path
+    this.asset.save_manifest = false
+
+    return this.asset.resolve(true)
+  },
+
+  helperss() : { [key:string]: Function } {
+    return {
+      addFile: this.addFile
+    }
   },
 
   computed: {
@@ -89,14 +102,6 @@ export const FileAPI = API.create({
   },
 
   methods: {
-
-    bundle() {
-      this.asset.load_path     = (<Boilerplate>this.boilerplate).src_path
-      this.asset.dst_path      = (<Boilerplate>this.boilerplate).dst_path
-      this.asset.save_manifest = false
-
-      return this.asset.resolve(true)
-    },
 
     _copyAndRender() {
       return this.bundle_copy()

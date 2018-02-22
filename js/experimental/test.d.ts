@@ -19,6 +19,9 @@ export interface APIOptions<A, Data = DefaultData<A>, Methods = DefaultMethods<A
     computed?: Accessors<Computed>;
     init?(): void;
     bundle?(): any;
+    helperss?(): {
+        [key: string]: Function;
+    };
 }
 export declare type ThisTypedAPIOptions<A, Data, Methods, Helpers, Computed> = object & APIOptions<A, Data, Methods, Helpers, Computed> & ThisType<CombinedAPIInstance<A, Data, Methods, Helpers, Computed>>;
 export declare type CombinedAPIInstance<Instance, Data, Methods, Helpers, Computed> = Data & Methods & Helpers & Computed & Instance;

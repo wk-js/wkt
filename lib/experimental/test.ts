@@ -17,6 +17,7 @@ export interface APIOptions<A, Data=DefaultData<A>, Methods=DefaultMethods<A>, H
 
   init?(): void
   bundle?(): any
+  helperss?(): { [key:string]: Function }
 }
 
 export type ThisTypedAPIOptions<A, Data, Methods, Helpers, Computed> =

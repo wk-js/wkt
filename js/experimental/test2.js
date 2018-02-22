@@ -11,8 +11,18 @@ const fs_1 = require("asset-pipeline/js/utils/fs");
 exports.FileAPI = test_1.API.create({
     init() {
         const boilerplate = this.boilerplate;
-        boilerplate.stack.before('bundle', 'bundle:file', this.bundle);
         boilerplate.root.stack.after('bundle', 'render:template', this._copyAndRender);
+    },
+    bundle() {
+        this.asset.load_path = this.boilerplate.src_path;
+        this.asset.dst_path = this.boilerplate.dst_path;
+        this.asset.save_manifest = false;
+        return this.asset.resolve(true);
+    },
+    helperss() {
+        return {
+            addFile: this.addFile
+        };
     },
     computed: {
         data() {
@@ -69,12 +79,6 @@ exports.FileAPI = test_1.API.create({
         }
     },
     methods: {
-        bundle() {
-            this.asset.load_path = this.boilerplate.src_path;
-            this.asset.dst_path = this.boilerplate.dst_path;
-            this.asset.save_manifest = false;
-            return this.asset.resolve(true);
-        },
         _copyAndRender() {
             return this.bundle_copy()
                 .then(this.bundle_render);
