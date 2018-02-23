@@ -1,4 +1,4 @@
-import { API } from './test'
+import { API, APIConstructor } from './api';
 import { AssetPipeline, AssetItemRules } from 'asset-pipeline/js/asset-pipeline';
 import { ChunkStack } from '../api/file/chunk_stack';
 import { merge } from "lol/utils/object";
@@ -9,7 +9,7 @@ import { dirname, relative } from "path";
 import { copy } from "asset-pipeline/js/utils/fs";
 import { Boilerplate } from '../boilerplate/boilerplate';
 
-export const FileAPI = API.create({
+const FileAPI = API.extend('file', {
 
   init() {
     const boilerplate = (<Boilerplate>this.boilerplate)
@@ -24,7 +24,7 @@ export const FileAPI = API.create({
     return this.asset.resolve(true)
   },
 
-  helperss() : { [key:string]: Function } {
+  helpers() : { [key:string]: Function } {
     return {
       addFile: this.addFile
     }
@@ -60,43 +60,6 @@ export const FileAPI = API.create({
       this.assets.push( asset )
 
       return asset
-    }
-
-  },
-
-  helpers: {
-
-    addFile(glob:string, parameters?:AssetItemRules) {
-      this.asset.addFile(glob, parameters)
-    },
-
-    ignoreFile(glob:string) {
-      this.asset.ignoreFile(glob)
-    },
-
-    addDirectory(glob:string, parameters?:AssetItemRules) {
-      this.asset.addDirectory(glob, parameters)
-    },
-
-    ignoreDirectory(glob:string) {
-      this.asset.ignoreDirectory(glob)
-    },
-
-    templateFile(glob:string, template?: object | boolean) {
-      this.asset.addFile(glob, { glob: glob, template: template })
-    },
-
-    templateData(data:object, options?: TemplateOptions) : object {
-      if (options) this.asset.renderer.options = options
-      return merge(this.data, data)
-    },
-
-    editFile(glob:string, callback:(value: Buffer | string) => Buffer | string ) {
-      this.asset.addFile(glob, { glob: '', edit: callback })
-    },
-
-    chunk() {
-      return this.chunk_stack
     }
 
   },
@@ -155,6 +118,39 @@ export const FileAPI = API.create({
           return asset.renderer.edit()
         })
       }, null)
+    },
+
+    addFile(glob:string, parameters?:AssetItemRules) {
+      this.asset.addFile(glob, parameters)
+    },
+
+    ignoreFile(glob:string) {
+      this.asset.ignoreFile(glob)
+    },
+
+    addDirectory(glob:string, parameters?:AssetItemRules) {
+      this.asset.addDirectory(glob, parameters)
+    },
+
+    ignoreDirectory(glob:string) {
+      this.asset.ignoreDirectory(glob)
+    },
+
+    templateFile(glob:string, template?: object | boolean) {
+      this.asset.addFile(glob, { glob: glob, template: template })
+    },
+
+    templateData(data:object, options?: TemplateOptions) : object {
+      if (options) this.asset.renderer.options = options
+      return merge(this.data, data)
+    },
+
+    editFile(glob:string, callback:(value: Buffer | string) => Buffer | string ) {
+      this.asset.addFile(glob, { glob: '', edit: callback })
+    },
+
+    chunk() {
+      return this.chunk_stack
     }
 
   }

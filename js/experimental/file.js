@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const test_1 = require("./test");
+const api_1 = require("./api");
 const asset_pipeline_1 = require("asset-pipeline/js/asset-pipeline");
 const chunk_stack_1 = require("../api/file/chunk_stack");
 const object_1 = require("lol/utils/object");
@@ -8,7 +8,7 @@ const merge_tool_1 = require("asset-pipeline/js/experimental/merge-tool");
 const when_1 = require("when");
 const path_1 = require("path");
 const fs_1 = require("asset-pipeline/js/utils/fs");
-exports.FileAPI = test_1.API.create({
+const FileAPI = api_1.API.extend('file', {
     init() {
         const boilerplate = this.boilerplate;
         boilerplate.root.stack.after('bundle', 'render:template', this._copyAndRender);
@@ -19,7 +19,7 @@ exports.FileAPI = test_1.API.create({
         this.asset.save_manifest = false;
         return this.asset.resolve(true);
     },
-    helperss() {
+    helpers() {
         return {
             addFile: this.addFile
         };
@@ -48,34 +48,6 @@ exports.FileAPI = test_1.API.create({
             this.store('file:current_asset', asset);
             this.assets.push(asset);
             return asset;
-        }
-    },
-    helpers: {
-        addFile(glob, parameters) {
-            this.asset.addFile(glob, parameters);
-        },
-        ignoreFile(glob) {
-            this.asset.ignoreFile(glob);
-        },
-        addDirectory(glob, parameters) {
-            this.asset.addDirectory(glob, parameters);
-        },
-        ignoreDirectory(glob) {
-            this.asset.ignoreDirectory(glob);
-        },
-        templateFile(glob, template) {
-            this.asset.addFile(glob, { glob: glob, template: template });
-        },
-        templateData(data, options) {
-            if (options)
-                this.asset.renderer.options = options;
-            return object_1.merge(this.data, data);
-        },
-        editFile(glob, callback) {
-            this.asset.addFile(glob, { glob: '', edit: callback });
-        },
-        chunk() {
-            return this.chunk_stack;
         }
     },
     methods: {
@@ -120,6 +92,32 @@ exports.FileAPI = test_1.API.create({
                     return asset.renderer.edit();
                 });
             }, null);
+        },
+        addFile(glob, parameters) {
+            this.asset.addFile(glob, parameters);
+        },
+        ignoreFile(glob) {
+            this.asset.ignoreFile(glob);
+        },
+        addDirectory(glob, parameters) {
+            this.asset.addDirectory(glob, parameters);
+        },
+        ignoreDirectory(glob) {
+            this.asset.ignoreDirectory(glob);
+        },
+        templateFile(glob, template) {
+            this.asset.addFile(glob, { glob: glob, template: template });
+        },
+        templateData(data, options) {
+            if (options)
+                this.asset.renderer.options = options;
+            return object_1.merge(this.data, data);
+        },
+        editFile(glob, callback) {
+            this.asset.addFile(glob, { glob: '', edit: callback });
+        },
+        chunk() {
+            return this.chunk_stack;
         }
     }
 });
