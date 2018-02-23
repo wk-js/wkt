@@ -17,6 +17,7 @@
     "asset-pipeline": "github:wk-js/asset-pipeline#1.0.4",
     "filelist": "0.0.6",
     "front-matter": "^2.3.0",
+    "fs-extra": "^5.0.0",
     "lol": "github:makemepulse/lol.js#0.0.9",
     "realize-package-specifier": "3.0.3",
     "when": "3.7.8",

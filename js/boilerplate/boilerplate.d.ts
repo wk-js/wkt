@@ -34,4 +34,5 @@ export declare class Boilerplate {
     resolveSources(sources: string[]): when.Promise<string[]>;
     getUsedAPIs(): any[];
     execute(): When.Promise<boolean>;
+    clean(): void;
 }

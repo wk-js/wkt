@@ -88,7 +88,7 @@ class Resolver {
                 const repo = res.hosted.ssh.split('#');
                 const repo_url = repo[0];
                 const repo_committish = repo[1];
-                path = `${process.cwd()}/.tmp/${hash}`;
+                path = `${process.cwd()}/.wkt-tmp/${hash}`;
                 let promise = when.resolve();
                 if (!checkPath(path)) {
                     promise = promise.then(() => {

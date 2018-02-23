@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../api/api");
 const configure_1 = require("../stack/configure");
 const fs = __importStar(require("fs"));
+const fs_extra_1 = require("fs-extra");
 const when_1 = __importDefault(require("when"));
 const path_1 = require("path");
 const function_1 = require("lol/utils/function");
@@ -147,10 +148,16 @@ class Boilerplate {
             }
         })
             .then(() => {
-            if (this.is_root)
+            if (this.is_root) {
                 print_1.P.debug(`Bundle done!`);
+                this.clean();
+            }
             return true;
         });
+    }
+    clean() {
+        // Clean tmp directory
+        fs_extra_1.removeSync(`${process.cwd()}/.wkt-tmp`);
     }
 }
 Boilerplate.Resolver = BoilerplateResolver;

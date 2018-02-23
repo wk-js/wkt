@@ -2,6 +2,7 @@ import { API } from '../api/api';
 import { Configure } from '../stack/configure';
 import { Mixin, MixinClass } from '../utils/mixin'
 import * as fs from 'fs'
+import { removeSync } from 'fs-extra';
 import when from 'when'
 import { setTimeout } from 'timers';
 import { dirname, relative, join, normalize, basename, extname, isAbsolute } from 'path';
@@ -178,9 +179,18 @@ export class Boilerplate {
     })
 
     .then(() => {
-      if (this.is_root) P.debug(`Bundle done!`)
+      if (this.is_root) {
+        P.debug(`Bundle done!`)
+        this.clean()
+      }
+
       return true
     })
+  }
+
+  clean() {
+    // Clean tmp directory
+    removeSync( `${process.cwd()}/.wkt-tmp` )
   }
 
 }
