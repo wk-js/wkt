@@ -11,7 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../api/api");
-const configure_1 = require("../stack/configure");
+const configure_group_1 = require("../stack/configure-group");
 const fs = __importStar(require("fs"));
 const fs_extra_1 = require("fs-extra");
 const when_1 = __importDefault(require("when"));
@@ -29,7 +29,7 @@ class Boilerplate {
         this._output = _output;
         this.configs = {};
         this.stores = {};
-        this.stack = new configure_1.Configure();
+        this.stack = new configure_group_1.ConfigureGroup();
         this.path = '';
         this.name = 'no-name';
         this.parent = null;

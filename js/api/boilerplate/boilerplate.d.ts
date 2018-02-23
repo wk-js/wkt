@@ -1,12 +1,12 @@
 import { Boilerplate } from '../../boilerplate/boilerplate';
 import { API } from "../api";
-import { Configure } from "../../stack/configure";
+import { ConfigureGroup } from "../../stack/configure-group";
 export declare class BoilerplateAPI extends API {
     init(): void;
     bundle(): void;
     helpers(): {
         api: (type?: string) => any;
-        stack: (type?: string) => Configure;
+        stack: (type?: string) => ConfigureGroup;
         store: (type: string) => {
             get: (key: string) => any;
             set: (key: string, value: any) => any;
@@ -15,7 +15,7 @@ export declare class BoilerplateAPI extends API {
     };
     getBoilerplate(type?: string): Boilerplate;
     api(type?: string): any;
-    stack(type?: string): Configure;
+    stack(type?: string): ConfigureGroup;
     store(type: string): {
         get: (key: string) => any;
         set: (key: string, value: any) => any;

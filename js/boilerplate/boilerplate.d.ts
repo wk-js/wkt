@@ -1,5 +1,5 @@
 /// <reference types="when" />
-import { Configure } from '../stack/configure';
+import { ConfigureGroup } from '../stack/configure-group';
 import when from 'when';
 import { Resolver } from '../resolver/index';
 export declare class Boilerplate {
@@ -11,7 +11,7 @@ export declare class Boilerplate {
     stores: {
         [key: string]: any;
     };
-    stack: Configure;
+    stack: ConfigureGroup;
     path: string;
     api: any;
     name: string;

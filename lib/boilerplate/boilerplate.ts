@@ -1,5 +1,5 @@
 import { API } from '../api/api';
-import { Configure } from '../stack/configure';
+import { ConfigureGroup } from '../stack/configure-group';
 import { Mixin, MixinClass } from '../utils/mixin'
 import * as fs from 'fs'
 import { removeSync } from 'fs-extra';
@@ -27,7 +27,7 @@ export class Boilerplate {
 
   configs: { [key: string]: any } = {}
   stores: { [key: string]: any } = {}
-  stack: Configure = new Configure()
+  stack: ConfigureGroup = new ConfigureGroup()
   path: string = ''
   api: any
 

@@ -1,6 +1,6 @@
 import { Boilerplate } from '../../boilerplate/boilerplate'
 import { API } from "../api";
-import { Configure } from "../../stack/configure";
+import { ConfigureGroup } from "../../stack/configure-group";
 
 export class BoilerplateAPI extends API {
 
@@ -10,10 +10,10 @@ export class BoilerplateAPI extends API {
 
   helpers() {
     return {
-      api:         this.api,
-      stack:       this.stack,
-      store:       this.store,
-      output:      this.output
+      api:    this.api,
+      stack:  this.stack,
+      store:  this.store,
+      output: this.output
     }
   }
 
