@@ -1,8 +1,8 @@
-import { API } from './api/api';
-import { FileAPI } from './api/file/file';
-import { BoilerplateAPI } from './api/boilerplate/boilerplate';
-import { PromptAPI } from './api/prompt/prompt';
-import { ExecAPI } from './api/exec/exec';
+import { API } from './experimental/api';
+import { FileAPI } from './experimental/file';
+import { BoilerplateAPI } from './experimental/boilerplate';
+import { PromptAPI } from './experimental/prompt';
+import { ExecAPI } from './experimental/exec';
 import { Boilerplate } from './boilerplate/boilerplate';
 
 API.Resolver.register( 'file', FileAPI )

@@ -12,4 +12,12 @@ _P.config.category({
         tag: { tag: 'wkt', styles: ['cyan'] }
     }
 });
+_P.config.category({
+    name: 'verbose',
+    visible: false,
+    extensions: {
+        style: { styles: ['grey'] },
+        tag: { tag: 'wkt-verbose', styles: ['cyan'] }
+    }
+});
 exports.P = _P;

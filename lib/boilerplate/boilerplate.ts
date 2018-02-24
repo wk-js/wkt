@@ -1,4 +1,4 @@
-import { API } from '../api/api';
+import { API } from '../experimental/api';
 import { ConfigureGroup } from '../stack/configure-group';
 import { Mixin, MixinClass } from '../utils/mixin'
 import * as fs from 'fs'
@@ -37,8 +37,8 @@ export class Boilerplate {
   children: Boilerplate[] = []
 
   constructor( private _output:string ) {
-    bind(this, 'parse', 'execute', 'bundle')
-    this.stack.add( 'bundle', this.bundle )
+    bind(this, 'parse', 'execute')
+    this.stack.add( 'bundle' )
   }
 
   get src_path() {
@@ -82,11 +82,6 @@ export class Boilerplate {
     }
 
     return this.stores[key]
-  }
-
-  bundle() {
-    P.debug( 'Bundles APIs', P.green(Object.keys(this.api.apis).join('|')) )
-    return API.bundle( this )
   }
 
   resolve( input:string, relativeTo:string = process.cwd() ) {
@@ -135,7 +130,7 @@ export class Boilerplate {
 
     .then(() => {
       apis = apis.concat( this.getUsedAPIs() )
-      this.api = API.create( this, unique(apis) )
+      this.api = API.configure( this, unique(apis) )
       parse( this, content )
     })
   }

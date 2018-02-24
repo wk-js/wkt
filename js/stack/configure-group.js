@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const when_1 = require("when");
 const configure_1 = require("./configure");
+const print_1 = require("../print");
 class ConfigureGroup extends configure_1.Configure {
     constructor() {
         super(...arguments);
@@ -43,8 +44,11 @@ class ConfigureGroup extends configure_1.Configure {
         let tasks = [];
         if (this.groups[key]) {
             for (const keyTask in this.groups[key].tasks) {
-                tasks.push(this.groups[key].tasks[keyTask]);
-                tasks = tasks.concat(this.groups[key].getGroupTasks(keyTask));
+                tasks.push({ key: key + ':' + keyTask, action: this.groups[key].tasks[keyTask] });
+                tasks = tasks.concat(this.groups[key].getGroupTasks(keyTask).map(function (task) {
+                    task.key = key + ':' + task.key;
+                    return task;
+                }));
             }
         }
         return tasks;
@@ -52,13 +56,16 @@ class ConfigureGroup extends configure_1.Configure {
     execute(hooks) {
         const tasks = this.order.map((key) => {
             return () => {
-                let fns = [this.tasks[key]];
+                let fns = [{ key: key, action: this.tasks[key] }];
                 fns = fns.concat(this.getGroupTasks(key));
                 if (hooks && hooks.beforeTask)
-                    fns.unshift(hooks.beforeTask);
+                    fns.unshift({ key: key + ':before', action: hooks.beforeTask });
                 if (hooks && hooks.afterTask)
-                    fns.push(hooks.afterTask);
-                return when_1.reduce(fns, (res, action) => action(), null);
+                    fns.push({ key: key + ':after', action: hooks.afterTask });
+                return when_1.reduce(fns, (res, task) => {
+                    print_1.P.verbose(`Execute ${task.key}`);
+                    return task.action();
+                }, null);
             };
         });
         const promise = when_1.reduce(tasks, (reduction, action, index) => {

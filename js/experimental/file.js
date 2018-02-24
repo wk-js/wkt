@@ -8,7 +8,7 @@ const merge_tool_1 = require("asset-pipeline/js/experimental/merge-tool");
 const when_1 = require("when");
 const path_1 = require("path");
 const fs_1 = require("asset-pipeline/js/utils/fs");
-const FileAPI = api_1.API.extend('file', {
+exports.FileAPI = api_1.API.extend('file', {
     init() {
         const boilerplate = this.boilerplate;
         boilerplate.root.stack.after('bundle', 'render:template', this._copyAndRender);
@@ -21,7 +21,14 @@ const FileAPI = api_1.API.extend('file', {
     },
     helpers() {
         return {
-            addFile: this.addFile
+            addFile: this.addFile,
+            ignoreFile: this.ignoreFile,
+            addDirectory: this.addDirectory,
+            ignoreDirectory: this.ignoreDirectory,
+            editFile: this.editFile,
+            templateFile: this.templateFile,
+            templateData: this.templateData,
+            chunk: this.chunk
         };
     },
     computed: {

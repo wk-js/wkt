@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_1 = require("./api/api");
+const api_1 = require("./experimental/api");
 exports.API = api_1.API;
-const file_1 = require("./api/file/file");
-const boilerplate_1 = require("./api/boilerplate/boilerplate");
-const prompt_1 = require("./api/prompt/prompt");
-const exec_1 = require("./api/exec/exec");
+const file_1 = require("./experimental/file");
+const boilerplate_1 = require("./experimental/boilerplate");
+const prompt_1 = require("./experimental/prompt");
+const exec_1 = require("./experimental/exec");
 const boilerplate_2 = require("./boilerplate/boilerplate");
 exports.Boilerplate = boilerplate_2.Boilerplate;
 api_1.API.Resolver.register('file', file_1.FileAPI);

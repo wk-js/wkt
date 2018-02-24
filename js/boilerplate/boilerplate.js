@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_1 = require("../api/api");
+const api_1 = require("../experimental/api");
 const configure_group_1 = require("../stack/configure-group");
 const fs = __importStar(require("fs"));
 const fs_extra_1 = require("fs-extra");
@@ -34,8 +34,8 @@ class Boilerplate {
         this.name = 'no-name';
         this.parent = null;
         this.children = [];
-        function_1.bind(this, 'parse', 'execute', 'bundle');
-        this.stack.add('bundle', this.bundle);
+        function_1.bind(this, 'parse', 'execute');
+        this.stack.add('bundle');
     }
     get src_path() {
         return path_1.normalize(path_1.relative(process.cwd(), path_1.dirname(this.path)));
@@ -70,10 +70,6 @@ class Boilerplate {
             return this.stores[key];
         }
         return this.stores[key];
-    }
-    bundle() {
-        print_1.P.debug('Bundles APIs', print_1.P.green(Object.keys(this.api.apis).join('|')));
-        return api_1.API.bundle(this);
     }
     resolve(input, relativeTo = process.cwd()) {
         return Boilerplate.Resolver.resolve(input, relativeTo).then(this.parse);
@@ -111,7 +107,7 @@ class Boilerplate {
         }))
             .then(() => {
             apis = apis.concat(this.getUsedAPIs());
-            this.api = api_1.API.create(this, array_1.unique(apis));
+            this.api = api_1.API.configure(this, array_1.unique(apis));
             utils_1.parse(this, content);
         });
     }

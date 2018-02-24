@@ -6,6 +6,9 @@ export declare class ConfigureGroup extends Configure {
     };
     group(key: string): ConfigureGroup;
     getFullOrder(): string[];
-    getGroupTasks(key: string): Function[];
+    getGroupTasks(key: string): {
+        key: string;
+        action: Function;
+    }[];
     execute(hooks?: any): When.Promise<void>;
 }

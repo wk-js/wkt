@@ -27,7 +27,6 @@ export declare class Boilerplate {
     readonly is_root: boolean;
     setOutput(output: string): string;
     store(key: string, value?: any): any | undefined;
-    bundle(): when.Promise<null>;
     resolve(input: string, relativeTo?: string): when.Promise<null>;
     parse(pth: string): When.Promise<null>;
     resolveAPIs(apis: string[], content: string): when.Promise<void>;

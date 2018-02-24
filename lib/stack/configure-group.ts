@@ -1,5 +1,6 @@
 import { reduce } from 'when';
 import { Configure } from './configure';
+import { P } from '../print'
 
 export class ConfigureGroup extends Configure {
 
@@ -48,12 +49,15 @@ export class ConfigureGroup extends Configure {
   }
 
   getGroupTasks(key:string) {
-    let tasks: Function[] = []
+    let tasks: ({ key:string, action:Function })[] = []
 
     if (this.groups[key]) {
       for (const keyTask in this.groups[key].tasks) {
-        tasks.push( this.groups[key].tasks[keyTask] )
-        tasks = tasks.concat( this.groups[key].getGroupTasks(keyTask) )
+        tasks.push({ key: key + ':' + keyTask, action: this.groups[key].tasks[keyTask] })
+        tasks = tasks.concat(this.groups[key].getGroupTasks(keyTask).map(function(task) {
+          task.key = key + ':' + task.key
+          return task
+        }))
       }
     }
 
@@ -63,14 +67,17 @@ export class ConfigureGroup extends Configure {
   execute(hooks?:any) {
     const tasks = this.order.map((key) => {
       return () => {
-        let fns = [ this.tasks[key] ]
+        let fns = [{ key: key, action: this.tasks[key] }]
 
         fns = fns.concat( this.getGroupTasks( key ) )
 
-        if (hooks && hooks.beforeTask) fns.unshift( hooks.beforeTask )
-        if (hooks && hooks.afterTask)  fns.push   ( hooks.afterTask )
+        if (hooks && hooks.beforeTask) fns.unshift({ key: key + ':before', action: hooks.beforeTask })
+        if (hooks && hooks.afterTask)  fns.push   ({ key: key + ':after' , action: hooks.afterTask  })
 
-        return reduce(fns, (res:null, action:Function) => action(), null)
+        return reduce(fns, (res:null, task:{ key:string, action:Function }) => {
+          P.verbose( `Execute ${task.key}` )
+          return task.action()
+        }, null)
       }
     })
 

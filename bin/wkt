@@ -2,6 +2,7 @@
 'use strict'
 
 const { Boilerplate } = require('../js')
+const { P }           = require('../js/print')
 const { Parser }      = require('wk-argv-parser')
 const { basename }    = require('path')
 
@@ -14,6 +15,8 @@ const { result, errors } = Parser.command('boilerplate')
 .string('output', './')
 .index('output', 1)
 .describe('output', `Add output (default: "./")`)
+
+.boolean('verbose', false)
 
 // --help, -h
 .help()
@@ -39,6 +42,8 @@ else if (errors) {
 else {
   result.config = null
   result.set( result.valid_params )
+
+  P.config.display('verbose', result.params.verbose)
 
   const bp = new Boilerplate( result.params.output )
   bp.resolve( result.params.input ).then( bp.execute )

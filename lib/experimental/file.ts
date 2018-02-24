@@ -9,7 +9,7 @@ import { dirname, relative } from "path";
 import { copy } from "asset-pipeline/js/utils/fs";
 import { Boilerplate } from '../boilerplate/boilerplate';
 
-const FileAPI = API.extend('file', {
+export const FileAPI = API.extend('file', {
 
   init() {
     const boilerplate = (<Boilerplate>this.boilerplate)
@@ -24,9 +24,16 @@ const FileAPI = API.extend('file', {
     return this.asset.resolve(true)
   },
 
-  helpers() : { [key:string]: Function } {
+  helpers() : any {
     return {
-      addFile: this.addFile
+      addFile: this.addFile,
+      ignoreFile: this.ignoreFile,
+      addDirectory: this.addDirectory,
+      ignoreDirectory: this.ignoreDirectory,
+      editFile: this.editFile,
+      templateFile: this.templateFile,
+      templateData: this.templateData,
+      chunk: this.chunk
     }
   },
 

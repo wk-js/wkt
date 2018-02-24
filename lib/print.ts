@@ -13,4 +13,13 @@ _P.config.category({
   }
 })
 
+_P.config.category({
+  name: 'verbose',
+  visible: false,
+  extensions: {
+    style: { styles: ['grey'] },
+    tag: { tag: 'wkt-verbose', styles: ['cyan'] }
+  }
+})
+
 export const P = _P as any
